@@ -70,6 +70,7 @@ StreamEx es una aplicación desarrollada para la transmisión de contenido multi
 
 ## Contribuciones
 
+
 Las contribuciones son bienvenidas. Por favor, abre un issue o envía un pull request para discutir cualquier cambio que desees realizar.
 
 ## Licencia
