@@ -52,19 +52,19 @@ StreamEx es una aplicación desarrollada para la transmisión de contenido multi
 4. **Ejecutar los microservicios**:
     - Microservicio de usuarios:
       ```
-      cd usuarios
+      cd USERS_API
       python manage.py runserver
       ```
 
     - Microservicio de contenidos:
       ```
-      cd contenidos
+      cd CONTENT_API
       flask run
       ```
 
     - Microservicio de recomendaciones:
       ```
-      cd recomendaciones
+      cd RECOMENDACIONES_API
       flask run
       ```
 
