@@ -1,0 +1,40 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EstremEX</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+</head>
+<body>
+    <div class="contenedor">
+        <div class="overlay"></div>
+        <header>
+            <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="logo">
+            <a href="{{ url_for('auth.login') }}" class="btn-iniciar-sesion">Iniciar sesión</a>
+        </header>
+
+        <div class="contenido-principal">
+            <h1>Películas y series ilimitadas y mucho más.</h1>
+            <p>Disfruta donde quieras. Cancela cuando quieras.</p>
+            <p>¿Quieres ver Netflix ya? Ingresa tu email para crear una cuenta o reiniciar tu membresía.</p>
+
+            <form class="formulario-email" action="{{ url_for('auth.verificar_correo') }}" method="POST">
+                <input type="email" name="email" id="email" placeholder="Correo electrónico" required>
+                <button type="submit" class="btn-comenzar">Comenzar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Para debugging
+        document.querySelector('.formulario-email').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            console.log('Enviando correo:', email);
+        });
+    </script>
+</body>
+</html>

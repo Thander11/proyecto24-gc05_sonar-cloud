@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Registrarse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="#" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="netflix-logo">
+            </a>
+        </nav>
+    </header>
+    
+    <main class="register-container">
+        <div class="register-overlay"></div>
+        <div class="register-content">
+            <h1>Registrarse</h1>
+            <div class="register-form">
+                <form id="register-form" action="{{ url_for('auth.verificar_registro') }}" method="POST">
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Email o número de teléfono" value="{{ email }}" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" placeholder="Contraseña" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="confirm_password" placeholder="Confirmar contraseña" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="nombre_usuario" placeholder="Nombre de usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthdate">Fecha de nacimiento</label>
+                        <div class="birth-date-group">
+                            <select id="birth-month" name="birth_month" required>
+                                <option value="01">Enero</option>
+                                <option value="02">Febrero</option>
+                                <option value="03">Marzo</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Mayo</option>
+                                <option value="06">Junio</option>
+                                <option value="07">Julio</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                            <select id="birth-day" name="birth_day" required>
+                                <option value="01">1</option>
+                                <option value="02">2</option>
+                                <option value="03">3</option>
+                                <option value="04">4</option>
+                                <option value="05">5</option>
+                                <option value="06">6</option>
+                                <option value="07">7</option>
+                                <option value="08">8</option>
+                                <option value="09">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                            </select>
+                            <select id="birth-year" name="birth_year" required>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <!-- Añade más años según necesites -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="numero_tarjeta" placeholder="Número de tarjeta" maxlength="16" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="fecha_caducidad" placeholder="Fecha de caducidad (MM/AA)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="cvc" placeholder="CVC" maxlength="3" required>
+                    </div>
+                    <button type="submit" class="btn-register">Registrarse</button>
+                </form>
+            </div>
+            <div class="login-link">
+                ¿Ya tienes una cuenta? <a href="#">Inicia sesión</a>
+            </div>
+            <div class="form-help">
+                <p>Esta página está protegida por Google reCAPTCHA para comprobar que no eres un robot. <a href="#">Más info.</a></p>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function(event) {
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+            if (password !== confirmPassword) {
+                event.preventDefault();
+                alert('Las contraseñas no coinciden. Por favor, inténtalo de nuevo.');
+            }
+        });
+    </script>
+</body>
+</html>
