@@ -3,7 +3,6 @@ import os
 from datetime import datetime, timedelta
 import sys
 
-
 def change_commit_author(authors):
     print("\nÚltimos commits:")
     subprocess.run(['git', 'log', '--oneline', '-n', '5'])
