@@ -1,7 +1,7 @@
 import subprocess
 import os
 from datetime import datetime, timedelta
-import sys
+import sys 
 
 def change_commit_author(authors):
     print("\nÚltimos commits:")
