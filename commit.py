@@ -40,7 +40,7 @@ def change_commit_author(authors):
     except subprocess.CalledProcessError as e:
         print(f"\nError al modificar el autor: {str(e)}")
 
-
+# Obtiene la rama actual
 def get_current_branch():
     return subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('utf-8').strip()
 
