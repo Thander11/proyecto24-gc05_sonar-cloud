@@ -3,7 +3,6 @@ import os
 from datetime import datetime, timedelta
 import sys
 
-
 # Permite cambiar el autor de un commit específico
 def change_commit_author(authors):
     print("\nÚltimos commits:")
