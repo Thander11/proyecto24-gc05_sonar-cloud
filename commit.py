@@ -48,6 +48,7 @@ def get_current_branch():
 def get_last_commit_message():
     return subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').strip()
 
+# Comprueba si hay cambios en el repositorio
 def has_changes():
     status = subprocess.check_output(['git', 'status', '--porcelain']).decode('utf-8')
     return bool(status.strip())
