@@ -53,6 +53,7 @@ def has_changes():
     status = subprocess.check_output(['git', 'status', '--porcelain']).decode('utf-8')
     return bool(status.strip())
 
+# Obtiene la fecha del último commit de una rama específica
 def get_latest_commit_date(branch_name):
     """Obtiene la fecha del último commit de una rama específica."""
     try:
