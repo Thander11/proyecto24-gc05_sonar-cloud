@@ -65,7 +65,7 @@ def get_latest_commit_date(branch_name):
         print(f"\nError al obtener la fecha del último commit de la rama '{branch_name}': {str(e)}")
         return None
 
-
+# Ajusta la fecha del merge para que sea posterior al último commit de ambas ramas
 def adjust_merge_date(branch1, branch2):
     """Ajusta la fecha del merge para que sea posterior al último commit de ambas ramas."""
     last_commit_branch1 = get_latest_commit_date(branch1)
