@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Series</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <script>
+        function toggleInfo(id) {
+            var info = document.getElementById('info-' + id);
+            if (info.style.display === 'none' || info.style.display === '') {
+                info.style.display = 'block';
+            } else {
+                info.style.display = 'none';
+            }
+        }
+
+        function eliminarSerie(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta serie?')) {
+                fetch(`/eliminar_serie/${id}`, {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar la serie');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la serie');
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="netflix-logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Gestión de Series</h1>
+        <div class="peliculas-list">
+            {% for serie in series %}
+            <div class="pelicula-item">
+                <button class="pelicula-title" onclick="toggleInfo({{ serie.id }})">{{ serie.titulo }}</button>
+                <div id="info-{{ serie.id }}" class="pelicula-info" style="display: none;">
+                    <p><strong>Sinopsis:</strong> {{ serie.sinopsis }}</p>
+                    <p><strong>Lanzamiento:</strong> {{ serie.lanzamiento }}</p>
+                    <p><strong>Géneros:</strong> {{ serie.generos | join(', ') }}</p>
+                    <p><strong>Reparto:</strong></p>
+                    <ul>
+                        {% for actor in serie.cast %}
+                        <li>{{ actor.nombre }} ({{ actor.actor.nombre }} {{ actor.actor.apellidos }})</li>
+                        {% endfor %}
+                    </ul>
+                    <p><strong>Temporadas:</strong></p>
+                    <ul>
+                        {% for temporada in serie.temporadas %}
+                        <li>{{ temporada.nombre }} ({{ temporada.lanzamiento }})</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="button-container">
+                        <a href="{{ url_for('auth.modificar_serie', serie_id=serie.id) }}" class="modificar-button">Modificar Serie</a>
+                        <a href="{{ url_for('auth.gestionar_cast_serie', serie_id=serie.id) }}" class="modificar-button">Gestionar Cast</a>
+                        <button onclick="eliminarSerie({{ serie.id }})" class="modificar-button">Eliminar Serie</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div>
+            <a href="{{ url_for('auth.anadir_serie') }}" class="anadir-button">Añadir Serie</a>
+        </div>
+    </main>
+</body>
+</html>
