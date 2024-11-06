@@ -34,7 +34,7 @@ class UserService:
     _session.mount('http://', adapter)
     _session.mount('https://', adapter)
     
-    TIMEOUT = (3.05, 2)  # (connect, read) timeout
+    TIMEOUT = (3.05, 5)  # (connect, read) timeout
     # Cache temporal para resultados
     _cache = {}
     CACHE_TTL = timedelta(minutes=5)
@@ -113,31 +113,6 @@ class UserService:
 
     @classmethod
     def obtener_perfil(cls, perfil_id):
-        # Hacer una solicitud de prueba a http://localhost:5010/visualizaciones/1/1
-        start_time = time.time()
-        test_url = 'http://localhost:5010/visualizaciones/1/1'
-        
-        kwargs = {
-            'timeout': (0.5, 3),
-            'verify': False,
-            'allow_redirects': False,
-            'headers': {
-                'Host': 'localhost:5010'
-            }
-        }
-
-        try:
-            conn_start = time.time()
-            with cls._session.get(test_url, **kwargs) as test_response:
-                if test_response.ok:
-                    print(f"Test request successful")
-                else:
-                    print(f"Test request failed with status code: {test_response.status_code}")
-            print(f"Test request time: {time.time() - start_time:.3f}s")
-        except Exception as e:
-            print(f"Error in test request: {e}")
-
-        # Continuar con la solicitud original para obtener el perfil
         response = cls._make_request('GET',
                                    f'{Config.API_BASE_URL}/api/perfiles/{perfil_id}/')
         return response.json() if response else None
@@ -410,3 +385,174 @@ class UserService:
         except Exception as e:
             print(f"Error fetching recommendations: {e}")
             return []
+
+    @classmethod
+    def obtener_peliculas(cls):
+        response = cls._make_request('GET', 'http://127.0.0.1:5005/peliculas')
+        return response.json() if response else []
+
+    @classmethod
+    def obtener_detalles_pelicula(cls, pelicula_id):
+        response = cls._make_request('GET', f'http://127.0.0.1:5005/peliculas/{pelicula_id}')
+        return response.json() if response else None
+
+    @classmethod
+    def obtener_generos(cls):
+        response = cls._make_request('GET', 'http://127.0.0.1:5005/generos')
+        return response.json() if response else []
+    @classmethod
+    def obtener_series(cls):
+        response = cls._make_request('GET', 'http://127.0.0.1:5005/series')
+        return response.json() if response else []
+
+    @classmethod
+    def obtener_personas(cls):
+        response = cls._make_request('GET', 'http://127.0.0.1:5005/personas')
+        return response.json() if response else []
+
+    @classmethod
+    def actualizar_pelicula(cls, pelicula_id, pelicula_actualizada):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/peliculas/{pelicula_id}', json=pelicula_actualizada)
+        return response.json() if response else None
+
+    @classmethod
+    def crear_pelicula(cls, pelicula_nueva):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/peliculas', json=pelicula_nueva)
+        return response.json() if response else None
+    
+    @classmethod
+    def eliminar_pelicula(cls, pelicula_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/peliculas/{pelicula_id}')
+        return response.status_code == 204 if response else False
+
+
+# En UserService.py
+
+    @classmethod
+    def actualizar_serie(cls, serie_id, serie_actualizada):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/series/{serie_id}', json=serie_actualizada)
+        if response:
+            # Limpiar caché específico
+            cls.obtener_detalles_serie.cache_clear()
+            return response.json()
+        return None
+
+    @classmethod
+    def actualizar_temporada(cls, temporada_id, temporada_actualizada):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/temporadas/{temporada_id}', json=temporada_actualizada)
+        if response:
+            # Limpiar caché específico
+            cls.obtener_detalles_serie.cache_clear()
+            return response.json()
+        return None
+
+    @classmethod
+    def crear_temporada(cls, temporada_nueva):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/temporadas', json=temporada_nueva)
+        if response:
+            # Limpiar caché específico
+            cls.obtener_detalles_serie.cache_clear()
+            return response.json()
+        return None
+
+    @classmethod
+    def actualizar_episodio(cls, episodio_id, episodio_actualizado):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/episodios/{episodio_id}', json=episodio_actualizado)
+        if response:
+            # Limpiar caché específico
+            cls.obtener_detalles_serie.cache_clear()
+            return response.json()
+        return None
+
+    @classmethod
+    def crear_episodio(cls, episodio_nuevo):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/episodios', json=episodio_nuevo)
+        if response:
+            # Limpiar caché específico
+            cls.obtener_detalles_serie.cache_clear()
+            return response.json()
+        return None
+
+    @classmethod
+    def crear_serie(cls, serie_nueva):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/series', json=serie_nueva)
+        return response.json() if response else None
+
+    @classmethod
+    def eliminar_temporada(cls, temporada_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/temporadas/{temporada_id}')
+        if response:
+            cls.obtener_detalles_serie.cache_clear()
+            return True
+        return False
+
+    @classmethod
+    def eliminar_episodio(cls, episodio_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/episodios/{episodio_id}')
+        if response:
+            cls.obtener_detalles_serie.cache_clear()
+            return True
+        return False
+
+    @classmethod
+    def eliminar_serie(cls, serie_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/series/{serie_id}')
+        if response:
+            cls.obtener_detalles_serie.cache_clear()
+            return True
+        return False
+
+    @classmethod
+    def eliminar_persona(cls, persona_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/personas/{persona_id}')
+        return response is not None
+
+    @classmethod
+    def eliminar_personaje(cls, personaje_id):
+        response = cls._make_request('DELETE', f'http://127.0.0.1:5005/personajes/{personaje_id}')
+        return response is not None
+
+    @classmethod
+    def crear_persona(cls, persona_nueva):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/personas', json=persona_nueva)
+        return response.json() if response else None
+
+    @classmethod
+    def crear_personaje(cls, personaje_nuevo):
+        response = cls._make_request('POST', 'http://127.0.0.1:5005/personajes', json=personaje_nuevo)
+        return response.json() if response else None
+
+    @classmethod
+    def actualizar_persona(cls, persona_id, persona_actualizada):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/personas/{persona_id}', json=persona_actualizada)
+        return response.json() if response else None
+
+    @classmethod
+    def actualizar_personaje(cls, personaje_id, personaje_actualizado):
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/personajes/{personaje_id}', json=personaje_actualizado)
+        return response.json() if response else None
+    
+    @classmethod
+    def obtener_personajes(cls):
+        # Remove caching for personajes list
+        response = cls._make_request('GET', 'http://127.0.0.1:5005/personajes')
+        return response.json() if response else []
+
+    @classmethod 
+    def actualizar_cast_serie(cls, serie_id, cast_ids):
+        data = {
+            "cast": cast_ids  
+        }
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/series/{serie_id}/cast', json=data)
+        # Clear the series cache after updating cast
+        if response:
+            cls.obtener_detalles_serie.cache_clear()
+        return response.json() if response else None
+
+    @classmethod 
+    def actualizar_cast_pelicula(cls, pelicula_id, cast_ids):
+        data = {
+            "cast": cast_ids  
+        }
+        response = cls._make_request('PUT', f'http://127.0.0.1:5005/peliculas/{pelicula_id}/cast', json=data)
+        return response.json() if response else None

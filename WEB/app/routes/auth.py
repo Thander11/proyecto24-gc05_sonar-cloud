@@ -430,3 +430,413 @@ def buscar_contenido():
     series = UserService.buscar_series(query)
     
     return render_template('resultados_busqueda.html', query=query, peliculas=peliculas, series=series)
+
+@auth_bp.route('/gestion')
+def gestion():
+    usuario = session.get('usuario')
+    if not usuario or usuario.get('id') != 0:
+        return redirect(url_for('auth.index'))
+    return render_template('gestion.html')
+
+
+@auth_bp.route('/gestion_peliculas')
+def gestion_peliculas():
+    peliculas = UserService.obtener_peliculas()
+    return render_template('gestion_peliculas.html', peliculas=peliculas)
+
+@auth_bp.route('/modificar_pelicula/<int:pelicula_id>')
+def modificar_pelicula(pelicula_id):
+    pelicula = UserService.obtener_detalles_pelicula(pelicula_id)
+    generos = UserService.obtener_generos()
+    return render_template('modificar_pelicula.html', pelicula=pelicula, generos=generos)
+
+@auth_bp.route('/gestion_series')
+def gestion_series():
+    series = UserService.obtener_series()
+    return render_template('gestion_series.html', series=series)
+
+@auth_bp.route('/anadir_pelicula')
+def anadir_pelicula():
+    generos = UserService.obtener_generos()
+    return render_template('anadir_pelicula.html', generos=generos)
+
+
+@auth_bp.route('/modificar_serie/<int:serie_id>')
+def modificar_serie(serie_id):
+    serie = UserService.obtener_detalles_serie(serie_id)
+    generos = UserService.obtener_generos()
+    return render_template('modificar_serie.html', serie=serie, generos=generos)
+
+@auth_bp.route('/anadir_serie')
+def anadir_serie():
+    generos = UserService.obtener_generos()
+    return render_template('anadir_serie.html', generos=generos)
+@auth_bp.route('/editar_personas')
+
+@auth_bp.route('/editar_personas')
+def editar_personas():
+    personas = UserService.obtener_personas()
+    # Sort personas by nombre and apellidos
+    personas_sorted = sorted(personas, key=lambda x: f"{x['nombre']} {x['apellidos']}")
+    return render_template('editar_personas.html', personas=personas_sorted)
+
+
+@auth_bp.route('/verificar_modificar_pelicula', methods=['POST'])
+def verificar_modificar_pelicula():
+    pelicula_id = request.form.get('id')
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    duracion = request.form.get('duracion')
+    lanzamiento = request.form.get('lanzamiento')
+    generos = [int(id) for id in request.form.get('generos').strip('[]').split(',') if id]
+
+    pelicula_actualizada = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "duracion": duracion,
+        "lanzamiento": lanzamiento,
+        "generos": generos
+    }
+
+    response = UserService.actualizar_pelicula(pelicula_id, pelicula_actualizada)
+    if response:
+        print(f"Película actualizada: {pelicula_id}")
+    else:
+        print("Error al actualizar la película.")
+    return redirect(url_for('auth.gestion_peliculas'))
+
+@auth_bp.route('/verificar_anadir_pelicula', methods=['POST'])
+def verificar_anadir_pelicula():
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    duracion = int(request.form.get('duracion'))
+    lanzamiento = int(request.form.get('lanzamiento'))
+    generos = [int(id) for id in request.form.get('generos').strip('[]').split(',') if id]
+
+    pelicula_nueva = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "duracion": duracion,
+        "lanzamiento": lanzamiento,
+        "generos": generos
+    }
+
+    response = UserService.crear_pelicula(pelicula_nueva)
+    if response:
+        print(f"Película creada: {response}")
+    else:
+        print("Error al crear la película.")
+    return redirect(url_for('auth.gestion_peliculas'))
+    
+@auth_bp.route('/eliminar_pelicula/<int:pelicula_id>', methods=['POST'])
+def eliminar_pelicula(pelicula_id):
+    response = UserService.eliminar_pelicula(pelicula_id)
+    if response:
+        print(f"Película eliminada: {pelicula_id}")
+    else:
+        print("Error al eliminar la película.")
+    return redirect(url_for('auth.gestion_peliculas'))
+
+
+# Series routes
+@auth_bp.route('/verificar_modificar_serie', methods=['POST'])
+def verificar_modificar_serie():
+    serie_id = request.form.get('id')
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    lanzamiento = int(request.form.get('lanzamiento'))
+    generos = [int(id) for id in request.form.get('generos').strip('[]').split(',') if id]
+
+    serie_actualizada = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "lanzamiento": lanzamiento,
+        "generos": generos
+    }
+
+    response = UserService.actualizar_serie(serie_id, serie_actualizada)
+    if response:
+        print(f"Serie actualizada: {serie_id}")
+    else:
+        print("Error al actualizar la serie.")
+    return redirect(url_for('auth.gestion_series'))
+
+# Temporadas routes
+@auth_bp.route('/verificar_modificar_temporada', methods=['POST'])
+def verificar_modificar_temporada():
+    temporada_id = request.form.get('id')
+    nombre = request.form.get('nombre')
+    lanzamiento = int(request.form.get('lanzamiento'))
+
+    temporada_actualizada = {
+        "nombre": nombre,
+        "lanzamiento": lanzamiento
+    }
+
+    response = UserService.actualizar_temporada(temporada_id, temporada_actualizada)
+    if response:
+        print(f"Temporada actualizada: {temporada_id}")
+    else:
+        print("Error al actualizar la temporada.")
+    return redirect(url_for('auth.modificar_serie', serie_id=request.form.get('serie_id')))
+
+@auth_bp.route('/verificar_crear_temporada', methods=['POST'])
+def verificar_crear_temporada():
+    serie_id = request.form.get('serie_id')
+    nombre = request.form.get('nombre')
+    lanzamiento = int(request.form.get('lanzamiento'))
+
+    nueva_temporada = {
+        "nombre": nombre,
+        "lanzamiento": lanzamiento,
+        "serie_id": serie_id
+    }
+
+    response = UserService.crear_temporada(nueva_temporada)
+    if response:
+        print(f"Temporada creada para serie: {serie_id}")
+    else:
+        print("Error al crear la temporada.")
+    return redirect(url_for('auth.modificar_serie', serie_id=serie_id))
+
+# Episodios routes
+@auth_bp.route('/verificar_modificar_episodio', methods=['POST'])
+def verificar_modificar_episodio():
+    episodio_id = request.form.get('id')
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    duracion = int(request.form.get('duracion'))
+    lanzamiento = int(request.form.get('lanzamiento'))
+
+    episodio_actualizado = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "duracion": duracion,
+        "lanzamiento": lanzamiento
+    }
+
+    response = UserService.actualizar_episodio(episodio_id, episodio_actualizado)
+    if response:
+        print(f"Episodio actualizado: {episodio_id}")
+    else:
+        print("Error al actualizar el episodio.")
+    return redirect(url_for('auth.modificar_serie', serie_id=request.form.get('serie_id')))
+
+@auth_bp.route('/verificar_crear_episodio', methods=['POST'])
+def verificar_crear_episodio():
+    temporada_id = request.form.get('idTemporada')  # Cambiado de temporada_id
+    serie_id = request.form.get('serie_id')
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    duracion = int(request.form.get('duracion'))
+    lanzamiento = int(request.form.get('lanzamiento'))
+
+    nuevo_episodio = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "duracion": duracion,
+        "lanzamiento": lanzamiento,
+        "idTemporada": int(temporada_id)  # Asegúrate de que sea un entero
+    }
+
+    response = UserService.crear_episodio(nuevo_episodio)
+    if response:
+        print(f"Episodio creado para temporada: {temporada_id}")
+    else:
+        print("Error al crear el episodio.")
+    return redirect(url_for('auth.modificar_serie', serie_id=serie_id))
+
+@auth_bp.route('/verificar_anadir_serie', methods=['POST'])
+def verificar_anadir_serie():
+    titulo = request.form.get('titulo')
+    sinopsis = request.form.get('sinopsis')
+    duracion = int(request.form.get('duracion'))
+    lanzamiento = int(request.form.get('lanzamiento'))
+    generos = [int(id) for id in request.form.get('generos').strip('[]').split(',') if id]
+
+    serie_nueva = {
+        "titulo": titulo,
+        "sinopsis": sinopsis,
+        "duracion": duracion,
+        "lanzamiento": lanzamiento,
+        "generos": generos
+    }
+
+    response = UserService.crear_serie(serie_nueva)
+    if response:
+        print(f"Serie creada: {response}")
+    else:
+        print("Error al crear la serie.")
+    return redirect(url_for('auth.gestion_series'))
+
+@auth_bp.route('/eliminar_temporada/<int:temporada_id>', methods=['POST'])
+def eliminar_temporada(temporada_id):
+    serie_id = request.form.get('serie_id')
+    response = UserService.eliminar_temporada(temporada_id)
+    if response:
+        print(f"Temporada eliminada: {temporada_id}")
+    else:
+        print("Error al eliminar la temporada.")
+    return redirect(url_for('auth.modificar_serie', serie_id=serie_id))
+
+@auth_bp.route('/eliminar_episodio/<int:episodio_id>', methods=['POST'])
+def eliminar_episodio(episodio_id):
+    serie_id = request.form.get('serie_id')
+    response = UserService.eliminar_episodio(episodio_id)
+    if response:
+        print(f"Episodio eliminado: {episodio_id}")
+    else:
+        print("Error al eliminar el episodio.")
+    return redirect(url_for('auth.modificar_serie', serie_id=serie_id))
+
+@auth_bp.route('/eliminar_serie/<int:serie_id>', methods=['POST'])
+def eliminar_serie(serie_id):
+    response = UserService.eliminar_serie(serie_id)
+    if response:
+        print(f"Serie eliminada: {serie_id}")
+    else:
+        print("Error al eliminar la serie.")
+    return redirect(url_for('auth.gestion_series'))
+
+
+@auth_bp.route('/eliminar_persona/<int:persona_id>', methods=['POST'])
+def eliminar_persona(persona_id):
+    response = UserService.eliminar_persona(persona_id)
+    if response:
+        print(f"Persona eliminada: {persona_id}")
+    else:
+        print("Error al eliminar la persona")
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/eliminar_personaje/<int:personaje_id>', methods=['POST'])
+def eliminar_personaje(personaje_id):
+    response = UserService.eliminar_personaje(personaje_id)
+    if response:
+        print(f"Personaje eliminado: {personaje_id}")
+    else:
+        print("Error al eliminar el personaje")
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/verificar_crear_persona', methods=['POST'])
+def verificar_crear_persona():
+    nombre = request.form.get('nombre')
+    apellidos = request.form.get('apellidos')
+    edad = int(request.form.get('edad'))
+    
+    nueva_persona = {
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "edad": edad
+    }
+    
+    response = UserService.crear_persona(nueva_persona)
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/verificar_crear_personaje', methods=['POST'])
+def verificar_crear_personaje():
+    nombre = request.form.get('nombre')
+    actor_id = request.form.get('actor_id')  # Changed from persona_id to actor_id
+    
+    nuevo_personaje = {
+        "nombre": nombre,
+        "actor_id": int(actor_id)  # Changed from idPersona to actor_id
+    }
+    
+    response = UserService.crear_personaje(nuevo_personaje)
+    if response:
+        print(f"Personaje creado: {response}")
+    else:
+        print("Error al crear el personaje.")
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/verificar_modificar_persona', methods=['POST'])
+def verificar_modificar_persona():
+    persona_id = request.form.get('id')
+    nombre = request.form.get('nombre')
+    apellidos = request.form.get('apellidos')
+    edad = int(request.form.get('edad'))
+
+    persona_actualizada = {
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "edad": edad
+    }
+
+    response = UserService.actualizar_persona(persona_id, persona_actualizada)
+    if response:
+        print(f"Persona actualizada: {persona_id}")
+    else:
+        print("Error al actualizar la persona")
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/verificar_modificar_personaje', methods=['POST'])
+def verificar_modificar_personaje():
+    personaje_id = request.form.get('id')
+    nombre = request.form.get('nombre')
+    actor_id = request.form.get('actor_id')
+
+    personaje_actualizado = {
+        "nombre": nombre,
+        "actor_id": int(actor_id)
+    }
+
+    response = UserService.actualizar_personaje(personaje_id, personaje_actualizado)
+    if response:
+        print(f"Personaje actualizado: {personaje_id}")
+    else:
+        print("Error al actualizar el personaje")
+    return redirect(url_for('auth.editar_personas'))
+
+@auth_bp.route('/gestionar_cast_serie/<int:serie_id>')
+def gestionar_cast_serie(serie_id):
+    serie = UserService.obtener_detalles_serie(serie_id)
+    todos_personajes = UserService.obtener_personajes()
+    
+    # Get current cast ids
+    cast_actual = []
+    if serie and 'cast' in serie:
+        cast_actual = [personaje['id'] for personaje in serie['cast']]
+    
+    return render_template('gestionar_cast_serie.html', 
+                         serie=serie, 
+                         todos_personajes=todos_personajes,
+                         cast_actual=cast_actual)
+
+@auth_bp.route('/actualizar_cast_serie/<int:serie_id>', methods=['POST'])
+def actualizar_cast_serie(serie_id):
+    personajes = request.form.get('personajes[]', '')
+    personajes_ids = [int(id) for id in personajes.split(',') if id]
+    
+    response = UserService.actualizar_cast_serie(serie_id, personajes_ids)
+    if response:
+        print(f"Cast actualizado para serie: {serie_id}")
+    else:
+        print("Error al actualizar el cast")
+    return redirect(url_for('auth.gestion_series'))
+
+@auth_bp.route('/gestionar_cast_pelicula/<int:pelicula_id>')
+def gestionar_cast_pelicula(pelicula_id):
+    pelicula = UserService.obtener_detalles_pelicula(pelicula_id)
+    todos_personajes = UserService.obtener_personajes()
+    
+    # Get current cast ids
+    cast_actual = []
+    if pelicula and 'cast' in pelicula:
+        cast_actual = [personaje['id'] for personaje in pelicula['cast']]
+    
+    return render_template('gestionar_cast_pelicula.html', 
+                         pelicula=pelicula, 
+                         todos_personajes=todos_personajes,
+                         cast_actual=cast_actual)
+
+@auth_bp.route('/actualizar_cast_pelicula/<int:pelicula_id>', methods=['POST'])
+def actualizar_cast_pelicula(pelicula_id):
+    personajes = request.form.get('personajes[]', '')
+    personajes_ids = [int(id) for id in personajes.split(',') if id]
+    
+    response = UserService.actualizar_cast_pelicula(pelicula_id, personajes_ids)
+    if response:
+        print(f"Cast actualizado para película: {pelicula_id}")
+    else:
+        print("Error al actualizar el cast")
+    return redirect(url_for('auth.gestion_peliculas'))

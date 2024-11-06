@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Película</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <script>
+        function toggleGenero(button) {
+            button.classList.toggle('selected');
+            updateGeneros();
+        }
+
+        function updateGeneros() {
+            const selectedGeneros = Array.from(document.querySelectorAll('.genero-button.selected'))
+                .map(button => parseInt(button.getAttribute('data-genero')));
+            document.getElementById('generos').value = JSON.stringify(selectedGeneros);
+        }
+
+        document.addEventListener('DOMContentLoaded', updateGeneros);
+
+        function enviarFormulario(event) {
+            event.preventDefault();
+            document.getElementById('form-pelicula').submit();
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="netflix-logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Añadir Película</h1>
+        <form id="form-pelicula" action="{{ url_for('auth.verificar_anadir_pelicula') }}" method="POST">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required>
+            
+            <label for="sinopsis">Sinopsis:</label>
+            <textarea id="sinopsis" name="sinopsis" required></textarea>
+            
+            <label for="duracion">Duración:</label>
+            <input type="number" id="duracion" name="duracion" required>
+            
+            <label for="lanzamiento">Lanzamiento:</label>
+            <input type="number" id="lanzamiento" name="lanzamiento" required>
+            
+            <label>Géneros:</label>
+            <div class="generos-container">
+                {% for genero in generos %}
+                <button type="button" 
+                        class="genero-button" 
+                        data-genero="{{ genero.id }}" 
+                        onclick="toggleGenero(this)">{{ genero.nombre }}</button>
+                {% endfor %}
+            </div>
+            <input type="hidden" id="generos" name="generos">
+            
+            <button type="button" onclick="enviarFormulario(event)" class="modificar-button">Añadir</button>
+        </form>
+    </main>
+</body>
+</html>

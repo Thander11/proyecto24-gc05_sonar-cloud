@@ -501,15 +501,21 @@ def update_cast(serie_id):
     
     # Limpiar el cast actual
     primer_episodio.cast = []
+    db.session.commit()  # Commit the deletion first
     
     # Agregar el nuevo cast
-    for personaje_id in data['cast']:
-        personaje = Personaje.query.get_or_404(personaje_id)
-        primer_episodio.cast.append(personaje)
+    if 'cast' in data:
+        for personaje_id in data['cast']:
+            personaje = Personaje.query.get_or_404(personaje_id)
+            primer_episodio.cast.append(personaje)
     
-    db.session.commit()
-    
-    return jsonify({'message': 'Cast actualizado exitosamente'}), 200
+    try:
+        db.session.commit()
+        return jsonify({'message': 'Cast actualizado exitosamente'}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating cast: {str(e)}")
+        return jsonify({'error': 'Error interno del servidor'}), 500
 
 @routes_bp.route('/series/<int:serie_id>/generos', methods=['PUT'])
 def update_generos(serie_id):
