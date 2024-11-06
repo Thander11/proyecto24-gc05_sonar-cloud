@@ -81,7 +81,7 @@ def adjust_merge_date(branch1, branch2):
         print("\nNo se pudo obtener la fecha del último commit en una o ambas ramas.")
         return None
 
-
+# Realiza un merge de la rama actual en la rama 'develop' con el autor seleccionado
 def do_merge_to_develop(authors):
     current_branch = get_current_branch()
     if current_branch == "develop":
