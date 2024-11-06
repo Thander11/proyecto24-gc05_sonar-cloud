@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Personas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <style>
+        .accordion {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            background-color: #222;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .accordion-header {
+            background-color: #333;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: #444;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        .nested-accordion {
+            margin-left: 20px;
+            border-left: 2px solid #444;
+            padding-left: 15px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .eliminar-button {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .eliminar-button:hover {
+            background-color: #c82333;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e50914;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+    <script>
+        function toggleAccordion(element) {
+            const content = element.closest('.accordion-item').querySelector(':scope > .accordion-content');
+            if (content) {
+                content.classList.toggle('active');
+            }
+        }
+
+        function eliminarPersona(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta persona?')) {
+                fetch(`/eliminar_persona/${id}`, {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar la persona');
+                    }
+                });
+            }
+        }
+
+        function eliminarPersonaje(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este personaje?')) {
+                fetch(`/eliminar_personaje/${id}`, {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el personaje');
+                    }
+                });
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchText = e.target.value.toLowerCase();
+                const personas = document.querySelectorAll('.accordion > .accordion-item:not(.add-persona)');
+
+                personas.forEach(persona => {
+                    const personaHeader = persona.querySelector('.header-title');
+                    const personaName = personaHeader.textContent.trim().toLowerCase();
+                    
+                    if (searchText === '' || personaName.includes(searchText)) {
+                        persona.classList.remove('hidden');
+                    } else {
+                        persona.classList.add('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Editar Personas</h1>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar personajes..." class="search-input">
+        </div>
+
+        <div class="accordion">
+            <!-- Añadir Nueva Persona -->
+            <div class="accordion-item add-persona">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="header-content">
+                        <div class="header-title">Añadir Nueva Persona</div>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <form action="{{ url_for('auth.verificar_crear_persona') }}" method="POST">
+                        <label for="nombre-nueva">Nombre:</label>
+                        <input type="text" id="nombre-nueva" name="nombre" required>
+                        <label for="apellidos-nueva">Apellidos:</label>
+                        <input type="text" id="apellidos-nueva" name="apellidos" required>
+                        <label for="edad-nueva">Edad:</label>
+                        <input type="number" id="edad-nueva" name="edad" required>
+                        <button type="submit" class="modificar-button">Crear Persona</button>
+                    </form>
+                </div>
+            </div>
+
+            {% for persona in personas %}
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <div class="header-content">
+                        <div class="header-title" onclick="toggleAccordion(this)">
+                            {{ persona.nombre }} {{ persona.apellidos }}
+                        </div>
+                        <button type="button" class="eliminar-button" 
+                                onclick="eliminarPersona({{ persona.id }})">
+                            Eliminar Persona
+                        </button>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <form action="{{ url_for('auth.verificar_modificar_persona') }}" method="POST">
+                        <input type="hidden" name="id" value="{{ persona.id }}">
+                        <label for="nombre-{{ persona.id }}">Nombre:</label>
+                        <input type="text" id="nombre-{{ persona.id }}" name="nombre" value="{{ persona.nombre }}" required>
+                        <label for="apellidos-{{ persona.id }}">Apellidos:</label>
+                        <input type="text" id="apellidos-{{ persona.id }}" name="apellidos" value="{{ persona.apellidos }}" required>
+                        <label for="edad-{{ persona.id }}">Edad:</label>
+                        <input type="number" id="edad-{{ persona.id }}" name="edad" value="{{ persona.edad }}" required>
+                        <button type="submit" class="modificar-button">Modificar Persona</button>
+                    </form>
+
+                    <div class="accordion-item nested-accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            Personajes
+                        </div>
+                        <div class="accordion-content">
+                            {% for personaje in persona.personajes %}
+                            <div class="accordion-item">
+                                <div class="accordion-header">
+                                    <div class="header-content">
+                                        <div class="header-title" onclick="toggleAccordion(this)">
+                                            {{ personaje.nombre }}
+                                        </div>
+                                        <button type="button" class="eliminar-button" 
+                                                onclick="eliminarPersonaje({{ personaje.id }})">
+                                            Eliminar Personaje
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="accordion-content">
+                                    <form action="{{ url_for('auth.verificar_modificar_personaje') }}" method="POST">
+                                        <input type="hidden" name="id" value="{{ personaje.id }}">
+                                        <input type="hidden" name="actor_id" value="{{ persona.id }}">
+                                        <label for="nombre-personaje-{{ personaje.id }}">Nombre:</label>
+                                        <input type="text" id="nombre-personaje-{{ personaje.id }}" 
+                                               name="nombre" value="{{ personaje.nombre }}" required>
+                                        <button type="submit" class="modificar-button">Modificar Personaje</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <!-- Añadir Nuevo Personaje -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <div class="header-content">
+                                        <div class="header-title">Añadir Nuevo Personaje</div>
+                                    </div>
+                                </div>
+                                <div class="accordion-content">
+                                    <form action="{{ url_for('auth.verificar_crear_personaje') }}" method="POST">
+                                        <input type="hidden" name="actor_id" value="{{ persona.id }}">  <!-- Changed from persona_id to actor_id -->
+                                        <label for="nombre-personaje-nuevo-{{ persona.id }}">Nombre:</label>
+                                        <input type="text" id="nombre-personaje-nuevo-{{ persona.id }}" 
+                                               name="nombre" required>
+                                        <button type="submit" class="modificar-button">Crear Personaje</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+</body>
+</html>

@@ -556,3 +556,18 @@ body {
 .video-list-container:hover .scroll-button {
   opacity: 1;
 }
+
+.admin-button {
+  background-color: #e50914;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  margin-left: 20px;
+}
+
+.admin-button:hover {
+  background-color: #f40612;
+}

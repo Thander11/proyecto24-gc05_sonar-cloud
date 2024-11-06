@@ -44,13 +44,16 @@ def change_commit_author(authors):
 def get_current_branch():
     return subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).decode('utf-8').strip()
 
+# Obtiene el mensaje del último commit
 def get_last_commit_message():
     return subprocess.check_output(['git', 'log', '-1', '--pretty=%B']).decode('utf-8').strip()
 
+# Comprueba si hay cambios en el repositorio
 def has_changes():
     status = subprocess.check_output(['git', 'status', '--porcelain']).decode('utf-8')
     return bool(status.strip())
 
+# Obtiene la fecha del último commit de una rama específica
 def get_latest_commit_date(branch_name):
     """Obtiene la fecha del último commit de una rama específica."""
     try:

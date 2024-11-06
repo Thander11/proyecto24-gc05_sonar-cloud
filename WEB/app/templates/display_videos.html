@@ -17,6 +17,9 @@
                 <input type="text" name="query" placeholder="Buscar series o películas..." required>
                 <button type="submit">Buscar</button>
             </form>
+            {% if session['usuario']['id'] == 0 %}
+            <a href="{{ url_for('auth.gestion') }}" class="admin-button">Admin</a>
+            {% endif %}
             <div class="perfil-info">
                 <a href="{{ url_for('auth.usuario') }}" class="cuenta-btn">Cuenta</a>
                 <span>{{ perfil.nombreperfil }}</span>
