@@ -132,7 +132,7 @@ def do_merge_to_develop(authors):
         # Volver a la rama original
         subprocess.run(['git', 'checkout', current_branch], check=True)
 
-
+# Realiza un merge de la rama 'develop' en la rama actual con el autor seleccionado
 def do_merge_from_develop(authors):
     current_branch = get_current_branch()
     if current_branch == "develop":
@@ -183,7 +183,7 @@ def do_merge_from_develop(authors):
     finally:
         subprocess.run(['git', 'checkout', current_branch], check=True)
 
-
+# Realiza un commit con el autor seleccionado y la fecha y hora personalizadas
 def do_commit(authors):
     if not has_changes():
         print("No hay cambios para hacer commit.")
@@ -278,7 +278,7 @@ def do_commit(authors):
     except subprocess.CalledProcessError as e:
         print(f"\nError al realizar el commit: {str(e)}")
 
-
+# Función principal que permite seleccionar la acción a realizar
 def main():
     if len(sys.argv) > 1:
         project_path = sys.argv[1]
@@ -324,6 +324,7 @@ def main():
         do_merge_from_develop(authors)
     else:
         change_commit_author(authors)
+
 
 
 if __name__ == "__main__":
