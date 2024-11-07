@@ -183,7 +183,7 @@ def do_merge_from_develop(authors):
     finally:
         subprocess.run(['git', 'checkout', current_branch], check=True)
 
-
+# Realiza un commit con el autor seleccionado y la fecha y hora personalizadas
 def do_commit(authors):
     if not has_changes():
         print("No hay cambios para hacer commit.")
