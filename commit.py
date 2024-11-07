@@ -132,7 +132,7 @@ def do_merge_to_develop(authors):
         # Volver a la rama original
         subprocess.run(['git', 'checkout', current_branch], check=True)
 
-
+# Realiza un merge de la rama 'develop' en la rama actual con el autor seleccionado
 def do_merge_from_develop(authors):
     current_branch = get_current_branch()
     if current_branch == "develop":
