@@ -278,7 +278,7 @@ def do_commit(authors):
     except subprocess.CalledProcessError as e:
         print(f"\nError al realizar el commit: {str(e)}")
 
-
+# Función principal que permite seleccionar la acción a realizar
 def main():
     if len(sys.argv) > 1:
         project_path = sys.argv[1]
