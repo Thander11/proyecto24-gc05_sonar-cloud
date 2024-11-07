@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix - Videos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/display_videos.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="#" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="netflix-logo">
+            </a>
+            <form action="{{ url_for('auth.buscar_contenido') }}" method="GET" class="search-form">
+                <input type="text" name="query" placeholder="Buscar series o películas..." required>
+                <button type="submit">Buscar</button>
+            </form>
+            {% if session['usuario']['id'] == 0 %}
+            <a href="{{ url_for('auth.gestion') }}" class="admin-button">Admin</a>
+            {% endif %}
+            <div class="perfil-info">
+                <a href="{{ url_for('auth.usuario') }}" class="cuenta-btn">Cuenta</a>
+                <span>{{ perfil.nombreperfil }}</span>
+                <div class="perfil-dropdown">
+                    <img src="{{ url_for('static', filename='imagenes/perfil' ~ perfil.fotoperfil ~ '.jpg') }}" alt="Foto de perfil" class="netflix-logo">
+                    <div class="perfil-dropdown-content">
+                        {% for p in perfiles %}
+                            <a href="{{ url_for('auth.display_videos', id=p.idperfil) }}">
+                                <img src="{{ url_for('static', filename='imagenes/perfil' ~ p.fotoperfil ~ '.jpg') }}" alt="Foto de perfil" style="width: 30px; height: 30px; border-radius: 50%;">
+                                {{ p.nombreperfil }}
+                            </a>
+                        {% endfor %}
+                        <a href="{{ url_for('auth.perfiles') }}" class="administrar-perfiles">
+                            <img src="{{ url_for('static', filename='imagenes/editar.png') }}" alt="Editar" class="editar-icono">
+                            Administrar Perfiles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="video-section">
+            <h2>Tendencias</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'tendencias')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="tendencias">
+                    {% for tendencia in tendencias %}
+                    <div class="debug-info">{{ tendencia }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ tendencia.tipo }}"
+                        data-id="{{ tendencia.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if tendencia.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (tendencia.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ tendencia.serieId }}">                                {% endif %}
+                                {% if tendencia.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ tendencia.contenidoId ~ '.jpg') }}" alt="Miniatura {{ tendencia.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ tendencia.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
+                                                <input type="hidden" name="id" value="{{ tendencia.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ tendencia.contenidoId }}">
+                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if tendencia.tipo == 'serie' %}
+                                            <span class="seasons">{{ tendencia.num_temporadas }} temporadas</span>
+                                        {% endif %}
+                                        <div class="tags">
+                                            <span>{{ tendencia.tipo }}</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'tendencias')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+
+
+        <div class="video-section">
+            <h2>Recomendaciones</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'recomendaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="recomendaciones">
+                    {% for recomendacion in recomendaciones %}
+                    <div class="debug-info">{{ recomendacion }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ recomendacion.tipo }}"
+                        data-id="{{ recomendacion.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if recomendacion.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (recomendacion.contenidoId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
+                                {% endif %}
+                                {% if recomendacion.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ recomendacion.contenidoId ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ recomendacion.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
+                                                <input type="hidden" name="id" value="{{ recomendacion.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ recomendacion.contenidoId }}">
+                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if recomendacion.tipo == 'serie' %}
+                                        <p>{{ recomendacion.num_temporadas }} Temporadas</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'recomendaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+
+
+        
+        <div class="video-section">
+            <h2>Favoritos</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'favoritos')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="favoritos">
+                    {% for favorito in favoritos %}
+                    <div class="debug-info">{{ favorito }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ favorito.tipo }}"
+                        data-id="{{ favorito.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if favorito.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (favorito.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ favorito.serieId }}">
+                                {% endif %}
+                                {% if favorito.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ favorito.contenidoId ~ '.jpg') }}" alt="Miniatura {{ favorito.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ favorito.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <input type="hidden" name="id" value="{{ favorito.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>
+                                            {% if favorito.tipo == 'pelicula' %}
+                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ favorito.contenidoId|trim }}">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <button type="submit" class="control-btn like">❌</button>
+                                            </form>
+                                            {% endif %}
+                                            {% if favorito.tipo == 'serie' %}
+                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ favorito.serieId|trim }}">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <button type="submit" class="control-btn like">❌</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if favorito.tipo == 'serie' %}
+                                            <span class="seasons">{{ favorito.num_temporadas }} temporadas</span>
+                                        {% endif %}
+                                        <div class="tags">
+                                            <span>{{ favorito.tipo }}</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'favoritos')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+
+
+        <div class="video-section">
+            <h2>Visualizaciones</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'visualizaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="visualizaciones">
+                    {% if visualizaciones %}
+                        {% for visualizacion in visualizaciones %}
+                            <div class="video-item"
+                            data-tipo="{{ visualizacion.tipo }}"
+                            data-id="{{ visualizacion.contenidoId|trim}}">                   
+                                <div class="video-item-inner">
+                                    {% if visualizacion.tipo == 'episodio' %}
+                                        <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (visualizacion.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ visualizacion.serieId }}">
+                                    {% endif %}
+                                    {% if visualizacion.tipo == 'pelicula' %}
+                                        <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ visualizacion.contenidoId ~ '.jpg') }}" alt="Miniatura {{ visualizacion.contenidoId }}">
+                                    {% endif %}
+                                    <div class="info">
+                                        <div class="info-top">
+                                            <h3>{{ visualizacion.nombre }}</h3>
+                                            <div class="controls">
+                                                <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                    <input type="hidden" name="tipo" value="{{ visualizacion.tipo }}">
+                                                    <input type="hidden" name="id" value="{{ visualizacion.contenidoId|trim }}">
+                                                    <input type="hidden" name="idserie" value="{{ visualizacion.serieId|trim }}">
+                                                    <button type="submit" class="control-btn play">▶</button>
+                                                </form>
+                                                {% if visualizacion.tipo == 'pelicula' %}
+                                                <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="contentId" value="{{ visualizacion.contenidoId }}">
+                                                    <input type="hidden" name="tipo" value="{{ visualizacion.tipo }}">
+                                                    <button type="submit" class="control-btn like">👍</button>
+                                                </form>
+                                                {% endif %}
+                                                {% if visualizacion.tipo == 'episodio' %}  
+                                                <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="contentId" value="{{ visualizacion.serieId }}">
+                                                    <input type="hidden" name="tipo" value="serie">
+                                                    <button type="submit" class="control-btn like">👍</button>
+                                                </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="info-bottom">
+                                            {% if visualizacion.tipo == 'episodio' %}
+                                                <span>Episodio: {{ visualizacion.episodio}}  </span>
+                                                <span>Temporada: {{ visualizacion.temporada }} </span>
+
+                                            {% endif %}
+                                            <div class="tags">
+                                                <span>{{ visualizacion.tipo }}</span>
+                                                <span>HD</span>
+                                                <span>16+</span>
+                                            </div>
+                                            <div class="progress-info">
+                                                {% if visualizacion.duracionTotal and visualizacion.duracionTotal > 0 %}
+                                                    {% set veces_vista = (visualizacion.duracionVista // visualizacion.duracionTotal) %}
+                                                    {% set tiempo_restante = visualizacion.duracionVista % visualizacion.duracionTotal %}
+
+                                                    {% if tiempo_restante > 0 %}
+                                                        <span>Actual: {{ tiempo_restante }} de {{ visualizacion.duracionTotal }} min</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span>Duración no disponible</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-visualizations">No hay visualizaciones disponibles</div>
+                    {% endif %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'visualizaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+    </main>
+
+    <script>
+        function scrollVideos(direction, section) {
+            const container = document.getElementById(section);
+            const scrollAmount = 800; // Ajusta este valor según necesites
+            const currentScroll = container.scrollLeft;
+            
+            if (direction === 'left') {
+                container.scrollTo({
+                    left: currentScroll - scrollAmount,
+                    behavior: 'smooth'
+                });
+            } else {
+                container.scrollTo({
+                    left: currentScroll + scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Mostrar/ocultar botones de scroll según la posición
+        const tendenciasContainer = document.getElementById('tendencias');
+        const favoritosContainer = document.getElementById('favoritos');
+        const leftButtonTendencias = document.querySelector('.scroll-button.left[onclick*="tendencias"]');
+        const rightButtonTendencias = document.querySelector('.scroll-button.right[onclick*="tendencias"]');
+        const leftButtonFavoritos = document.querySelector('.scroll-button.left[onclick*="favoritos"]');
+        const rightButtonFavoritos = document.querySelector('.scroll-button.right[onclick*="favoritos"]');
+        const visualizacionesContainer = document.getElementById('visualizaciones');
+const leftButtonVisualizaciones = document.querySelector('.scroll-button.left[onclick*="visualizaciones"]');
+const rightButtonVisualizaciones = document.querySelector('.scroll-button.right[onclick*="visualizaciones"]');
+
+        tendenciasContainer.addEventListener('scroll', () => {
+            leftButtonTendencias.style.opacity = tendenciasContainer.scrollLeft > 0 ? '1' : '0';
+            rightButtonTendencias.style.opacity = 
+                (tendenciasContainer.scrollWidth - tendenciasContainer.clientWidth - tendenciasContainer.scrollLeft) > 0 ? '1' : '0';
+        });
+
+        favoritosContainer.addEventListener('scroll', () => {
+            leftButtonFavoritos.style.opacity = favoritosContainer.scrollLeft > 0 ? '1' : '0';
+            rightButtonFavoritos.style.opacity = 
+                (favoritosContainer.scrollWidth - favoritosContainer.clientWidth - favoritosContainer.scrollLeft) > 0 ? '1' : '0';
+        });
+
+        visualizacionesContainer.addEventListener('scroll', () => {
+            leftButtonVisualizaciones.style.opacity = visualizacionesContainer.scrollLeft > 0 ? '1' : '0';
+            rightButtonVisualizaciones.style.opacity = 
+                (visualizacionesContainer.scrollWidth - visualizacionesContainer.clientWidth - visualizacionesContainer.scrollLeft) > 0 ? '1' : '0';
+        });
+
+    </script>
+</body>
+</html>

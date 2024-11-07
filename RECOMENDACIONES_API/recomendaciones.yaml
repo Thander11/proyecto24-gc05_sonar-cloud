@@ -1,0 +1,213 @@
+openapi: 3.0.0
+info:
+  title: API de Visualizaciones y Favoritos
+  version: 1.0.0
+  description: API para gestionar las visualizaciones y favoritos de los usuarios en la plataforma de streaming
+
+paths:
+  /visualizaciones:
+    post:
+      summary: Registra una nueva visualización
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Visualizacion'
+      responses:
+        '201':
+          description: Visualización registrada con éxito
+        '400':
+          description: Datos de visualización inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /visualizaciones/{usuarioId}:
+    get:
+      summary: Obtiene el historial de visualizaciones de un usuario
+      parameters:
+        - in: path
+          name: usuarioId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Historial de visualizaciones obtenido con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Visualizacion'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /visualizaciones/{usuarioId}/{contenidoId}:
+    get:
+      summary: Obtiene la visualización de un usuario en un contenido
+      parameters:
+        - in: path
+          name: usuarioId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: contenidoId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Visualización obtenida con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Visualizacion'
+        '404':
+          description: Visualización no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /favoritos/{usuarioId}/{contenidoId}:
+    post:
+      summary: Añade un contenido a la lista de favoritos de un usuario
+      parameters:
+        - in: path
+          name: usuarioId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: contenidoId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Contenido añadido a favoritos con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorito'
+        '400':
+          description: Datos de favorito inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Elimina un contenido de la lista de favoritos de un usuario
+      parameters:
+        - in: path
+          name: usuarioId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: contenidoId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Contenido eliminado de favoritos con éxito
+        '404':
+          description: Contenido no encontrado en favoritos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /favoritos/{usuarioId}:
+    get:
+      summary: Obtiene la lista de favoritos de un usuario
+      parameters:
+        - in: path
+          name: usuarioId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de favoritos obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Favorito'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tendencias:
+    get:
+      summary: Obtiene las tendencias actuales en la plataforma
+      responses:
+        '200':
+          description: Tendencias obtenidas con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tendencia'
+
+components:
+  schemas:
+    Visualizacion:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
+        contenidoId:
+          type: integer
+        fechaVisualizacion:
+          type: string
+          format: date-time
+        duracion:
+          type: integer
+          description: Duración de la visualización en segundos
+
+    Favorito:
+      type: object
+      properties:
+        usuarioId:
+          type: integer
+        contenidoId:
+          type: integer
+        fechaAgregado:
+          type: string
+          format: date-time
+
+    Tendencia:
+      type: object
+      properties:
+        contenidoId:
+          type: integer
+        titulo:
+          type: string
+        categoria:
+          type: string
+        popularidad:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        codigo:
+          type: integer
+        mensaje:
+          type: string

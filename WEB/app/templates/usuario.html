@@ -1,0 +1,110 @@
+<!-- USUARIO.HTML -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Usuario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/usuario.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.6/jquery.inputmask.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.index') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Netflix Logo" class="netflix-logo">
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="logout-btn">Cerrar Sesión</a>
+        </nav>
+    </header>
+    
+    <main class="usuario-container">
+        <h1>Detalles del Usuario</h1>
+        <div class="usuario-detalles">
+            <p><strong>Nombre de Usuario:</strong> {{ session['usuario']['nombreusuario'] }}</p>
+            <p><strong>Correo Electrónico:</strong> {{ session['usuario']['correoelectronico'] }}</p>
+            <p>
+                <strong>Contraseña:</strong> 
+                <span class="password-container">
+                    <span id="password">********</span>
+                </span>
+            </p>
+            {% if pago %}
+            <div class="pago-detalles">
+                <h2>Detalles del Pago</h2>
+                <p><strong>Número de Tarjeta:</strong> {{ pago.numerotarjeta }}</p>
+                <p><strong>Fecha de Caducidad:</strong> {{ pago.fechacaducidad }}</p>
+                <p>
+                    <strong>CVC:</strong> 
+                    <span class="cvc-container">
+                        <span id="cvc">***</span>
+                    </span>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        <button id="editar-usuario-btn" class="btn-volver">Editar Usuario</button>
+        <a href="{{ url_for('auth.perfiles') }}" class="btn-volver">Volver a Perfiles</a>
+    </main>
+
+    <!-- Modal -->
+    <div id="editar-usuario-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form action="{{ url_for('auth.verificar_editar_usuario') }}" method="POST">
+                <input type="hidden" name="perfil_id" value="{{ session['usuario']['id'] }}">
+                <input type="hidden" name="pago_id" value="{{ pago.id }}">
+
+                <label for="correoelectronico">Correo Electrónico:</label>
+                <input type="email" id="correoelectronico" name="correoelectronico" value="{{ session['usuario']['correoelectronico'] }}" required>
+
+                <label for="nombreusuario">Nombre de Usuario:</label>
+                <input type="text" id="nombreusuario" name="nombreusuario" value="{{ session['usuario']['nombreusuario'] }}" required>
+
+                <label for="numerotarjeta">Número de Tarjeta:</label>
+                <input type="text" id="numerotarjeta" name="numerotarjeta" value="{{ pago.numerotarjeta }}" required>
+
+                <label for="fechacaducidad">Fecha de Caducidad:</label>
+                <div class="fecha-caducidad-container">
+                    <input type="text" id="mes" name="mes" maxlength="2" placeholder="MM" value="{{ pago.fechacaducidad.split('/')[0] }}" required>
+                    <span>/</span>
+                    <input type="text" id="anio" name="anio" maxlength="2" placeholder="YY" value="{{ pago.fechacaducidad.split('/')[1] }}" required>
+                </div>
+
+                <label for="cvc">CVC:</label>
+                <input type="text" id="cvc" name="cvc" value="{{ pago.cvc }}" maxlength="3" required>
+
+                <button type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('#mes').inputmask('99', { 'placeholder': 'MM' });
+            $('#anio').inputmask('99', { 'placeholder': 'YY' });
+        });
+
+        // Modal functionality
+        var modal = document.getElementById("editar-usuario-modal");
+        var btn = document.getElementById("editar-usuario-btn");
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
