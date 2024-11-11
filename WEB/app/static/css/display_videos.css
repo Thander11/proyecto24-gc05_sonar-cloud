@@ -316,14 +316,14 @@ body {
 .search-form button {
   padding: 10px;
   border: none;
-  background-color: #e50914;
+  background-color: #00a72f;
   color: white;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
 }
 
 .search-form button:hover {
-  background-color: #f40612;
+  background-color: #00ea43;
 }
 
 /* Reset y estilos base */
@@ -353,7 +353,7 @@ body {
   flex: 0 0 120px;
 }
 
-.netflix-logo {
+.Streamex-logo {
   height: 35px;
   width: auto;
 }
@@ -387,7 +387,7 @@ body {
 .search-form button {
   padding: 10px 20px;
   border: none;
-  background-color: #e50914;
+  background-color: #00a72f;
   color: white;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
@@ -396,7 +396,7 @@ body {
 }
 
 .search-form button:hover {
-  background-color: #f40612;
+  background-color: #00ea43;
 }
 
 .perfil-info {
@@ -558,7 +558,7 @@ body {
 }
 
 .admin-button {
-  background-color: #e50914;
+  background-color: #00a72f;
   color: white;
   padding: 10px 20px;
   text-decoration: none;
@@ -569,5 +569,5 @@ body {
 }
 
 .admin-button:hover {
-  background-color: #f40612;
+  background-color: #00ea43;
 }

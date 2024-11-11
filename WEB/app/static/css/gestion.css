@@ -43,7 +43,7 @@ h1 {
 
 .gestion-button {
     display: inline-block;
-    background-color: #e50914;
+    background-color: #00a72f;
     color: white;
     padding: 15px 30px;
     text-decoration: none;
@@ -54,7 +54,7 @@ h1 {
 }
 
 .gestion-button:hover {
-    background-color: #f40612;
+    background-color: #00ea43;
 }
 
 .peliculas-list {
@@ -74,7 +74,7 @@ h1 {
 }
 
 .pelicula-title, .temporada-title, .episodio-title {
-    background-color: #e50914;
+    background-color: #00a72f;
     color: white;
     padding: 15px;
     border: none;
@@ -89,7 +89,7 @@ h1 {
 }
 
 .pelicula-title:hover, .temporada-title:hover, .episodio-title:hover {
-    background-color: #f40612;
+    background-color: #00ea43;
 }
 
 .pelicula-info, .temporada-info, .episodio-info {
@@ -113,7 +113,7 @@ h1 {
 
 .modificar-button {
     display: inline-block;
-    background-color: #e50914;
+    background-color: #00a72f;
     color: white;
     padding: 10px 20px;
     text-decoration: none;
@@ -127,7 +127,7 @@ h1 {
 }
 
 .modificar-button:hover {
-    background-color: #f40612;
+    background-color: #00ea43;
 }
 
 form {
@@ -171,7 +171,7 @@ form input, form textarea, form select {
 }
 
 .genero-button.selected {
-    background-color: #e50914;
+    background-color: #00a72f;
 }
 
 .genero-button:hover {
@@ -179,7 +179,7 @@ form input, form textarea, form select {
 }
 
 form button {
-    background-color: #e50914;
+    background-color: #00a72f;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -190,7 +190,7 @@ form button {
 }
 
 form button:hover {
-    background-color: #f40612;
+    background-color: #00ea43;
 }
 
 #url-ejemplo, #json-ejemplo {
@@ -254,7 +254,7 @@ cursor: pointer;
 }
 
 .eliminar-button {
-background-color: #dc3545;
+background-color: #25e060;
 color: white;
 padding: 5px 10px;
 border: none;
@@ -265,5 +265,5 @@ margin-left: 10px;
 }
 
 .eliminar-button:hover {
-background-color: #c82333;
+background-color: #23c84c;
 }

@@ -1,6 +1,6 @@
 /* Variables globales */
 :root {
-    --primary-color: #e50914;
+    --primary-color: #00a72f;
     --secondary-color: #141414;
     --text-color: #ffffff;
     --background-color: #000000;
@@ -31,7 +31,7 @@
     margin: 0 auto;
   }
   
-  .netflix-logo {
+  .Streamex-logo {
     height: 40px;
   }
   
@@ -103,7 +103,7 @@
   }
   
   .modificar-button:hover {
-    background-color: #f40612;
+    background-color: #00ea43;
     transform: translateY(-2px);
   }
   

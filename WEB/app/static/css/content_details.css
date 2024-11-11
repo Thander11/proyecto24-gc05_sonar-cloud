@@ -42,7 +42,7 @@ body {
 }
 
 .card-title {
-    color: #e50914;
+    color: #00a72f;
     font-size: 2.5em;
     margin-bottom: 20px;
 }
@@ -52,7 +52,7 @@ body {
     background: rgba(229, 9, 20, 0.1);
     padding: 20px;
     border-radius: 5px;
-    border-left: 4px solid #e50914;
+    border-left: 4px solid #00a72f;
     margin-top: 20px;
 }
 
@@ -98,7 +98,7 @@ body {
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: #e50914 !important;
+    background-color: #00a72f !important;
     color: white !important;
 }
 
@@ -142,7 +142,7 @@ body {
 }
 
 .season-title {
-    color: #e50914;
+    color: #00a72f;
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid #333;
@@ -155,7 +155,7 @@ body {
 .episode {
     margin: 20px 0;
     padding: 10px;
-    border-left: 3px solid #e50914;
+    border-left: 3px solid #00a72f;
     background: rgba(0, 0, 0, 0.2);
 }
 
@@ -191,8 +191,8 @@ body {
 }
 
 .list-group-item.active {
-    background-color: #e50914 !important;
-    border-color: #e50914 !important;
+    background-color: #00a72f !important;
+    border-color: #00a72f !important;
 }
 .hover-highlight:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -300,7 +300,7 @@ body {
 }
 
 .dropdown-header {
-    color: #e50914;
+    color: #00a72f;
     font-weight: bold;
 }
 
