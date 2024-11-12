@@ -2,6 +2,7 @@ import subprocess
 import platform
 import os
 
+# Función para abrir un comando en una nueva terminal
 def open_new_terminal(command, title=None):
     """
     Abre un comando en una nueva terminal según el sistema operativo y ejecuta el script.
