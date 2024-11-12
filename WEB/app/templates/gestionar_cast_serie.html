@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Cast - {{ serie.titulo }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <style>
+        .lists-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 70px;
+        }
+
+        .list-section {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .list-title {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .search-container {
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+
+        .personajes-list {
+            min-height: 200px;
+            background-color: #333;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .personaje-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background-color: #444;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            cursor: move;
+        }
+
+        .personaje-nombre {
+            font-weight: bold;
+        }
+
+        .personaje-actor {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .personaje-item.dragging {
+            opacity: 0.5;
+            background-color: #555;
+        }
+
+        .personajes-list.drag-over {
+            background-color: #3a3a3a;
+            border: 2px dashed #666;
+        }
+
+        .actions-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #222;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Gestionar Cast de {{ serie.titulo }}</h1>
+        <form id="castForm" action="{{ url_for('auth.actualizar_cast_serie', serie_id=serie.id) }}" method="POST">
+            <div class="lists-container">
+                <div class="list-section">
+                    <h2 class="list-title">Personajes Disponibles</h2>
+                    <div class="search-container">
+                        <input type="text" id="searchPersonajes" 
+                               class="search-input" 
+                               placeholder="Buscar personajes...">
+                    </div>
+                    <div class="personajes-list" id="availableList" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        {% for personaje in todos_personajes %}
+                            {% if personaje.id not in cast_actual %}
+                            <!-- Replace in both availableList and selectedList sections -->
+                            <div class="personaje-item" 
+                                 draggable="true" 
+                                 ondragstart="drag(event)" 
+                                 id="personaje-{{ personaje.id }}" 
+                                 data-id="{{ personaje.id }}">
+                                <div class="personaje-nombre">{{ personaje.nombre }}</div>
+                                {% if personaje.actor %}
+                                <div class="personaje-actor">
+                                    Interpretado por: {{ personaje.actor.nombre }} {{ personaje.actor.apellidos }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="list-section">
+                    <h2 class="list-title">Cast Seleccionado</h2>
+                    <div class="personajes-list" id="selectedList" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        {% for personaje in todos_personajes %}
+                            {% if personaje.id in cast_actual %}
+                            <!-- Replace in both availableList and selectedList sections -->
+                            <div class="personaje-item" 
+                                 draggable="true" 
+                                 ondragstart="drag(event)" 
+                                 id="personaje-{{ personaje.id }}" 
+                                 data-id="{{ personaje.id }}">
+                                <div class="personaje-nombre">{{ personaje.nombre }}</div>
+                                {% if personaje.actor %}
+                                <div class="personaje-actor">
+                                    Interpretado por: {{ personaje.actor.nombre }} {{ personaje.actor.apellidos }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="personajes[]" id="selectedPersonajes">
+            <div class="actions-container">
+                <button type="button" onclick="submitForm()" class="modificar-button">Guardar Cambios</button>
+                <a href="{{ url_for('auth.gestion_series') }}" class="modificar-button">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.add('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.target.classList.add('dragging');
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.currentTarget.classList.remove('drag-over');
+            var data = ev.dataTransfer.getData("text");
+            var draggedElement = document.getElementById(data);
+            draggedElement.classList.remove('dragging');
+            ev.currentTarget.appendChild(draggedElement);
+        }
+
+        document.querySelectorAll('.personajes-list').forEach(list => {
+            list.addEventListener('dragleave', function(e) {
+                e.currentTarget.classList.remove('drag-over');
+            });
+        });
+
+        document.getElementById('searchPersonajes').addEventListener('input', function(e) {
+            const searchText = e.target.value.toLowerCase();
+            const availablePersonajes = document.querySelectorAll('#availableList .personaje-item');
+            
+            availablePersonajes.forEach(personaje => {
+                const text = personaje.textContent.toLowerCase();
+                personaje.style.display = text.includes(searchText) ? '' : 'none';
+            });
+        });
+
+        function submitForm() {
+            const selectedList = document.getElementById('selectedList');
+            const selectedIds = Array.from(selectedList.children)
+                                   .map(item => item.dataset.id);
+            document.getElementById('selectedPersonajes').value = selectedIds.join(',');
+            document.getElementById('castForm').submit();
+        }
+    </script>
+</body>
+</html>

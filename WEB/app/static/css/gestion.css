@@ -1,0 +1,269 @@
+/* static/css/gestion.css */
+body {
+    background-color: #141414;
+    color: #fff;
+    margin: 0;
+    font-family: Netflix Sans, Helvetica Neue, Segoe UI, Roboto, Ubuntu, sans-serif;
+}
+
+.nav-header {
+    padding: 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    top: 0;
+}
+
+.nav-logo {
+    display: block;
+    width: 120px;
+    transition: opacity 0.3s;
+}
+
+.nav-logo:hover {
+    opacity: 0.8;
+}
+
+.nav-logo img {
+    width: 100%;
+    height: auto;
+}
+
+main {
+    margin: 100px auto;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+.gestion-button {
+    display: inline-block;
+    background-color: #00a72f;
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    margin: 10px;
+}
+
+.gestion-button:hover {
+    background-color: #00ea43;
+}
+
+.peliculas-list {
+    margin: 20px auto;
+    width: 80%;
+    max-width: 1200px;
+    text-align: left;
+}
+
+.pelicula-item, .temporada-item, .episodio-info {
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #222;
+    padding: 15px;
+}
+
+.pelicula-title, .temporada-title, .episodio-title {
+    background-color: #00a72f;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.2s;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.pelicula-title:hover, .temporada-title:hover, .episodio-title:hover {
+    background-color: #00ea43;
+}
+
+.pelicula-info, .temporada-info, .episodio-info {
+    background-color: #333;
+    padding: 15px;
+    display: none;
+    border-radius: 5px;
+}
+
+.pelicula-info p, .pelicula-info ul {
+    margin: 10px 0;
+}
+
+.pelicula-info ul {
+    padding-left: 20px;
+}
+
+.pelicula-info li {
+    list-style: disc;
+}
+
+.modificar-button {
+    display: inline-block;
+    background-color: #00a72f;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+}
+
+.modificar-button:hover {
+    background-color: #00ea43;
+}
+
+form {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+}
+
+.generos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.genero-button {
+    background-color: #444;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.genero-button.selected {
+    background-color: #00a72f;
+}
+
+.genero-button:hover {
+    background-color: #555;
+}
+
+form button {
+    background-color: #00a72f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+form button:hover {
+    background-color: #00ea43;
+}
+
+#url-ejemplo, #json-ejemplo {
+    text-align: left;
+    margin-top: 20px;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap;
+}
+
+.accordion {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.accordion-item {
+    background-color: #222;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.accordion-header {
+    background-color: #333;
+    padding: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.accordion-header:hover {
+    background-color: #444;
+}
+
+.accordion-content {
+    display: none;
+    padding: 15px;
+}
+
+.accordion-content.active {
+    display: block;
+}
+
+.nested-accordion {
+    margin-left: 20px;
+    border-left: 2px solid #444;
+    padding-left: 15px;
+}
+
+.header-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+}
+
+.header-title {
+flex-grow: 1;
+cursor: pointer;
+}
+
+.eliminar-button {
+background-color: #25e060;
+color: white;
+padding: 5px 10px;
+border: none;
+border-radius: 3px;
+cursor: pointer;
+font-size: 12px;
+margin-left: 10px;
+}
+
+.eliminar-button:hover {
+background-color: #23c84c;
+}

@@ -1,0 +1,88 @@
+¡<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Películas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <script>
+        function toggleInfo(id) {
+            var info = document.getElementById('info-' + id);
+            if (info.style.display === 'none' || info.style.display === '') {
+                info.style.display = 'block';
+            } else {
+                info.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Gestión de Películas</h1>
+        <div class="peliculas-list">
+            {% for pelicula in peliculas %}
+            <div class="pelicula-item">
+                <button class="pelicula-title" onclick="toggleInfo({{ pelicula.id }})">{{ pelicula.titulo }}</button>
+                <div id="info-{{ pelicula.id }}" class="pelicula-info" style="display: none;">
+                    <p><strong>Sinopsis:</strong> {{ pelicula.sinopsis }}</p>
+                    <p><strong>Duración:</strong> {{ pelicula.duracion }} minutos</p>
+                    <p><strong>Lanzamiento:</strong> {{ pelicula.lanzamiento }}</p>
+                    <p><strong>Géneros:</strong> {{ pelicula.generos | join(', ') }}</p>
+                    <p><strong>Reparto:</strong></p>
+                    <ul>
+                        {% for actor in pelicula.cast %}
+                        <li>{{ actor.nombre }} ({{ actor.actor.nombre }} {{ actor.actor.apellidos }})</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="button-container">
+                        <a href="{{ url_for('auth.modificar_pelicula', pelicula_id=pelicula.id) }}" class="modificar-button">Modificar Pelicula</a>
+                        <a href="{{ url_for('auth.gestionar_cast_pelicula', pelicula_id=pelicula.id) }}" class="modificar-button">Gestionar Cast</a>
+                        <button onclick="eliminarPelicula({{ pelicula.id }})" class="modificar-button">Eliminar Pelicula</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div>
+            <a href="{{ url_for('auth.anadir_pelicula') }}" class="anadir-button">Añadir Película</a>
+        </div>
+    </main>
+</body>
+<script>
+    function toggleInfo(id) {
+        var info = document.getElementById('info-' + id);
+        if (info.style.display === 'none' || info.style.display === '') {
+            info.style.display = 'block';
+        } else {
+            info.style.display = 'none';
+        }
+    }
+
+    function eliminarPelicula(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar esta película?')) {
+            fetch(`/eliminar_pelicula/${id}`, {
+                method: 'POST',
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error al eliminar la película');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al eliminar la película');
+            });
+        }
+    }
+</script>
+</html>

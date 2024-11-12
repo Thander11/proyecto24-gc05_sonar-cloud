@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Serie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+
+    <script>
+        function toggleGenero(button) {
+            button.classList.toggle('selected');
+            updateGeneros();
+        }
+
+        function updateGeneros() {
+            const selectedGeneros = Array.from(document.querySelectorAll('.genero-button.selected'))
+                .map(button => parseInt(button.getAttribute('data-genero')));
+            document.getElementById('generos').value = JSON.stringify(selectedGeneros);
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            if (content && content.classList.contains('accordion-content')) {
+                content.classList.toggle('active');
+                
+                // Si es el acordeón de "Añadir Nueva Temporada", no cerrar el acordeón padre
+                if (header.textContent.trim() === "Añadir Nueva Temporada") {
+                    return;
+                }
+                
+                // Para otros casos, evitar que el click se propague al contenedor padre
+                event.stopPropagation();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGeneros();
+            // Abrir el primer acordeón por defecto
+            const firstAccordion = document.querySelector('.accordion-content');
+            if (firstAccordion) {
+                firstAccordion.classList.add('active');
+            }
+        });
+
+        function enviarFormularioSerie(event) {
+            event.preventDefault();
+            document.getElementById('form-serie').submit();
+        }
+
+        function enviarFormularioTemporada(id) {
+            document.getElementById(`form-temporada-${id}`).submit();
+        }
+
+        function enviarFormularioEpisodio(id) {
+            document.getElementById(`form-episodio-${id}`).submit();
+        }
+
+        function enviarFormularioNuevaTemporada() {
+            document.getElementById('form-nueva-temporada').submit();
+        }
+
+        function enviarFormularioNuevoEpisodio(temporadaId) {
+            document.getElementById(`form-nuevo-episodio-${temporadaId}`).submit();
+        }
+    </script>
+</head>
+
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Editar Serie</h1>
+        
+        <div class="accordion">
+            <!-- Información General -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Información General de la Serie
+                </div>
+                <div class="accordion-content">
+                    <form id="form-serie" action="{{ url_for('auth.verificar_modificar_serie') }}" method="POST">
+                        <input type="hidden" name="id" value="{{ serie.id }}">
+                        <label for="titulo">Título:</label>
+                        <input type="text" id="titulo" name="titulo" value="{{ serie.titulo }}" required>
+                        <label for="sinopsis">Sinopsis:</label>
+                        <textarea id="sinopsis" name="sinopsis" required>{{ serie.sinopsis }}</textarea>
+                        <label for="lanzamiento">Lanzamiento:</label>
+                        <input type="number" id="lanzamiento" name="lanzamiento" value="{{ serie.lanzamiento }}" required>
+                        
+                        <label>Géneros:</label>
+                        <div class="generos-container">
+                            {% for genero in generos %}
+                            <button type="button" 
+                                    class="genero-button{% if genero.id in serie.generos %} selected{% endif %}" 
+                                    data-genero="{{ genero.id }}" 
+                                    onclick="toggleGenero(this)">{{ genero.nombre }}</button>
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" id="generos" name="generos">
+                        
+                        <button type="button" onclick="enviarFormularioSerie(event)" class="modificar-button">Modificar Serie</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Temporadas -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    Gestión de Temporadas
+                </div>
+                <div class="accordion-content">
+                    {% for temporada in serie.temporadas %}
+                    <div class="accordion-item nested-accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <div class="header-content">
+                                <span>{{ temporada.nombre }}</span>
+                                <form action="{{ url_for('auth.eliminar_temporada', temporada_id=temporada.id) }}" 
+                                      method="POST" 
+                                      style="display: inline-block;"
+                                      onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta temporada?');">
+                                    <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                    <button type="submit" class="eliminar-button" 
+                                            onclick="event.stopPropagation();">Eliminar Temporada</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="accordion-content">
+                            <!-- Form for season -->
+                            <form id="form-temporada-{{ temporada.id }}" action="{{ url_for('auth.verificar_modificar_temporada') }}" method="POST">
+                                <input type="hidden" name="id" value="{{ temporada.id }}">
+                                <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                <label for="nombre-{{ temporada.id }}">Nombre:</label>
+                                <input type="text" id="nombre-{{ temporada.id }}" name="nombre" value="{{ temporada.nombre }}" required>
+                                <label for="lanzamiento-{{ temporada.id }}">Lanzamiento:</label>
+                                <input type="number" id="lanzamiento-{{ temporada.id }}" name="lanzamiento" value="{{ temporada.lanzamiento }}" required>
+                                <button type="button" onclick="enviarFormularioTemporada({{ temporada.id }})" class="modificar-button">Modificar Temporada</button>
+                            </form>
+
+                            <!-- Episodes -->
+                            <div class="accordion-item nested-accordion">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    Episodios de {{ temporada.nombre }}
+                                </div>
+                                <div class="accordion-content">
+                                    {% for episodio in temporada.episodios %}
+                                    <div class="accordion-item">
+                                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                                            <div class="header-content">
+                                                <span>{{ episodio.titulo }}</span>
+                                                <form action="{{ url_for('auth.eliminar_episodio', episodio_id=episodio.id) }}" 
+                                                      method="POST" 
+                                                      onsubmit="return confirm('¿Estás seguro de que quieres eliminar este episodio?');">
+                                                    <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                                    <button type="submit" class="eliminar-button" 
+                                                            onclick="event.stopPropagation();">Eliminar Episodio</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-content">
+                                            <form id="form-episodio-{{ episodio.id }}" action="{{ url_for('auth.verificar_modificar_episodio') }}" method="POST">
+                                                <input type="hidden" name="id" value="{{ episodio.id }}">
+                                                <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                                <label for="titulo-{{ episodio.id }}">Título:</label>
+                                                <input type="text" id="titulo-{{ episodio.id }}" name="titulo" value="{{ episodio.titulo }}" required>
+                                                <label for="sinopsis-{{ episodio.id }}">Sinopsis:</label>
+                                                <textarea id="sinopsis-{{ episodio.id }}" name="sinopsis" required>{{ episodio.sinopsis }}</textarea>
+                                                <label for="duracion-{{ episodio.id }}">Duración:</label>
+                                                <input type="number" id="duracion-{{ episodio.id }}" name="duracion" value="{{ episodio.duracion }}" required>
+                                                <label for="lanzamiento-{{ episodio.id }}">Lanzamiento:</label>
+                                                <input type="number" id="lanzamiento-{{ episodio.id }}" name="lanzamiento" value="{{ episodio.lanzamiento }}" required>
+                                                <button type="button" onclick="enviarFormularioEpisodio({{ episodio.id }})" class="modificar-button">Modificar Episodio</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                                    <!-- Nuevo Episodio -->
+                                    <div class="accordion-item">
+                                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                                            Añadir Nuevo Episodio
+                                        </div>
+                                        <div class="accordion-content">
+                                            <form id="form-nuevo-episodio-{{ temporada.id }}" action="{{ url_for('auth.verificar_crear_episodio') }}" method="POST">
+                                                <input type="hidden" name="idTemporada" value="{{ temporada.id }}">
+                                                <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                                <label for="nuevo-titulo-{{ temporada.id }}">Título:</label>
+                                                <input type="text" id="nuevo-titulo-{{ temporada.id }}" name="titulo" required>
+                                                <label for="nuevo-sinopsis-{{ temporada.id }}">Sinopsis:</label>
+                                                <textarea id="nuevo-sinopsis-{{ temporada.id }}" name="sinopsis" required></textarea>
+                                                <label for="nuevo-duracion-{{ temporada.id }}">Duración:</label>
+                                                <input type="number" id="nuevo-duracion-{{ temporada.id }}" name="duracion" required>
+                                                <label for="nuevo-lanzamiento-{{ temporada.id }}">Lanzamiento:</label>
+                                                <input type="number" id="nuevo-lanzamiento-{{ temporada.id }}" name="lanzamiento" required>
+                                                <button type="button" onclick="enviarFormularioNuevoEpisodio({{ temporada.id }})" class="modificar-button">Añadir Episodio</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Nueva Temporada -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            Añadir Nueva Temporada
+                        </div>
+                        <div class="accordion-content">
+                            <form id="form-nueva-temporada" action="{{ url_for('auth.verificar_crear_temporada') }}" method="POST">
+                                <input type="hidden" name="serie_id" value="{{ serie.id }}">
+                                <label for="nueva-nombre">Nombre:</label>
+                                <input type="text" id="nueva-nombre" name="nombre" required>
+                                <label for="nueva-lanzamiento">Lanzamiento:</label>
+                                <input type="number" id="nueva-lanzamiento" name="lanzamiento" required>
+                                <button type="button" onclick="enviarFormularioNuevaTemporada()" class="modificar-button">Añadir Temporada</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
