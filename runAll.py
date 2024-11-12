@@ -46,5 +46,6 @@ def main():
     for command, title in scripts:
         open_new_terminal(command, title)
 
+
 if __name__ == "__main__":
     main()
