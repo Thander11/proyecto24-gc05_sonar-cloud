@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from sqlalchemy import create_engine, Index
 from sqlalchemy.pool import QueuePool
 
-DATABASE = 'recomendaciones.db'
+DATABASE = './RECOMENDACIONES_API/recomendaciones.db'
 
 def fetch_data(url):
     response = requests.get(url)
