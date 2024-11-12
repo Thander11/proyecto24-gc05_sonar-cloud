@@ -326,6 +326,7 @@ def main():
         change_commit_author(authors)
 
 
-
+# Ejecutar el script con la ruta del proyecto como argumento permitirá cambiar al directorio del proyecto
 if __name__ == "__main__":
     main()
+
