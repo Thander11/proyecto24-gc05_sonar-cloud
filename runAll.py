@@ -2,6 +2,7 @@ import subprocess
 import platform
 import os
 
+# Función para abrir un comando en una nueva terminal
 def open_new_terminal(command, title=None):
     """
     Abre un comando en una nueva terminal según el sistema operativo y ejecuta el script.
@@ -26,6 +27,7 @@ def open_new_terminal(command, title=None):
     except Exception as e:
         print(f"\nError al intentar abrir el comando en una nueva terminal: {str(e)}")
 
+# Función principal
 def main():
     """
     Ejecuta los scripts en nuevas terminales.
@@ -43,6 +45,7 @@ def main():
 
     for command, title in scripts:
         open_new_terminal(command, title)
+
 
 if __name__ == "__main__":
     main()
