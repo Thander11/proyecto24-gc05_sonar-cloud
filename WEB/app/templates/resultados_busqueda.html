@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de búsqueda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/display_videos.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos', id=session.get('perfil', {}).get('id')) }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+            </a>
+            <form action="{{ url_for('auth.buscar_contenido') }}" method="GET" class="search-form">
+                <input type="text" name="query" placeholder="Buscar series o películas..." value="{{ query }}" required>
+                <button type="submit">Buscar</button>
+            </form>
+            <div class="perfil-info">
+                <a href="{{ url_for('auth.usuario') }}" class="cuenta-btn">Cuenta</a>
+                <span>{{ session.get('perfil', {}).get('nombreperfil') }}</span>
+                <div class="perfil-dropdown">
+                    <img src="{{ url_for('static', filename='imagenes/perfil' ~ session.get('perfil', {}).get('fotoperfil') ~ '.jpg') }}" alt="Foto de perfil" class="Streamex-logo">
+                    <div class="perfil-dropdown-content">
+                        {% for p in perfiles %}
+                            <a href="{{ url_for('auth.display_videos', id=p.idperfil) }}">
+                                <img src="{{ url_for('static', filename='imagenes/perfil' ~ p.fotoperfil ~ '.jpg') }}" alt="Foto de perfil" style="width: 30px; height: 30px; border-radius: 50%;">
+                                {{ p.nombreperfil }}
+                            </a>
+                        {% endfor %}
+                        <a href="{{ url_for('auth.perfiles') }}" class="administrar-perfiles">
+                            <img src="{{ url_for('static', filename='imagenes/editar.png') }}" alt="Editar" class="editar-icono">
+                            Administrar Perfiles
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="video-section">
+            <h2>Resultados de búsqueda para "{{ query }}"</h2>
+            <div class="video-list-container">
+                <h3>Películas</h3>
+                <div class="video-list">
+                    {% for pelicula in peliculas %}
+                        <div class="video-item" data-tipo="pelicula" data-id="{{ pelicula.id }}">
+                            <div class="video-item-inner">
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ pelicula.id ~ '.jpg') }}" alt="Miniatura {{ pelicula.id }}">
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ pelicula.titulo }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="pelicula">
+                                                <input type="hidden" name="id" value="{{ pelicula.id }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ pelicula.id }}">
+                                                <input type="hidden" name="tipo" value="pelicula">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        <div class="tags">
+                                            <span>Película</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="video-list-container">
+                <h3>Series</h3>
+                <div class="video-list">
+                    {% for serie in series %}
+                        <div class="video-item" data-tipo="serie" data-id="{{ serie.id }}">
+                            <div class="video-item-inner">
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (serie.id + 50) ~ '.jpg') }}" alt="Miniatura {{ serie.id }}">
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ serie.titulo }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="serie">
+                                                <input type="hidden" name="id" value="{{ serie.id }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ serie.id }}">
+                                                <input type="hidden" name="tipo" value="serie">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        <div class="tags">
+                                            <span>Serie</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

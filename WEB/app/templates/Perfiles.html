@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamex - Perfiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/perfiles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="#" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+            </a>
+        </nav>
+    </header>
+    
+    <main class="perfiles-container">
+        <h1>Selecciona tu perfil</h1>
+        <div class="perfiles-list">
+            {% for perfil in perfiles %}
+                <div class="perfil-item" data-id="{{ perfil.idperfil }}">
+                    <div class="perfil-img-container">
+                        <img src="{{ url_for('static', filename='imagenes/perfil' + perfil.fotoperfil|string + '.jpg') }}" alt="Foto de perfil">
+                        <img class="editar-icono" src="{{ url_for('static', filename='imagenes/editar.png') }}" alt="Editar perfil">
+                    </div>
+                    <p>{{ perfil.nombreperfil }}</p>
+                </div>
+            {% endfor %}
+            {% if perfiles|length < 4 %}
+                <div class="perfil-item ocultar-en-administrar">
+                    <a href="{{ url_for('auth.crear_perfil', email=email) }}">
+                        <img src="{{ url_for('static', filename='imagenes/botonmas.png') }}" alt="Crear perfil">
+                    </a>
+                    <p>Añadir perfil</p>
+                </div>
+            {% endif %}
+        </div>
+        <button id="administrar-perfil-btn" class="btn-administrar">Administrar Perfiles</button>
+    </main>
+
+    <script>
+        document.getElementById('administrar-perfil-btn').addEventListener('click', function() {
+            document.body.classList.toggle('administrar-modo');
+            document.querySelectorAll('.ocultar-en-administrar').forEach(function(item) {
+                item.classList.toggle('oculto');
+            });
+        });
+
+        document.querySelectorAll('.perfil-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                if (document.body.classList.contains('administrar-modo')) {
+                    const perfilId = this.getAttribute('data-id');
+                    window.location.href = '{{ url_for("auth.editar_perfil") }}?id=' + perfilId;
+                } else {
+                    const perfilId = this.getAttribute('data-id');
+                    window.location.href = '{{ url_for("auth.display_videos") }}?id=' + perfilId;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
