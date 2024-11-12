@@ -27,6 +27,7 @@ def open_new_terminal(command, title=None):
     except Exception as e:
         print(f"\nError al intentar abrir el comando en una nueva terminal: {str(e)}")
 
+# Función principal
 def main():
     """
     Ejecuta los scripts en nuevas terminales.
