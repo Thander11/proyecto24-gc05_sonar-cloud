@@ -9,7 +9,7 @@ StreamEx es una aplicación desarrollada para la transmisión de contenido multi
 3. **Microservicio de Recomendaciones**: También desarrollado en Flask, este microservicio proporciona recomendaciones personalizadas a los usuarios basadas en sus preferencias y comportamiento de visualización.
 
 ## Características
-
+ 
 - **Interfaz de Usuario**: La interfaz de usuario de StreamEx es similar a la de Netflix en algunos aspectos, proporcionando una experiencia de usuario intuitiva y atractiva.
 - **Autenticación y Autorización**: Gestión segura de usuarios con autenticación y autorización.
 - **Gestión de Contenidos**: Carga, almacenamiento y transmisión eficiente de contenido multimedia.
