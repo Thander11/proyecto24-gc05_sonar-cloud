@@ -68,8 +68,12 @@ StreamEx es una aplicación desarrollada para la transmisión de contenido multi
       flask run
       ```
 
-## Contribuciones
+    - Alternativamente, puedes ejecutar todos los microservicios con un solo comando:
+      ```
+      python ./runAll.py
+      ```
 
+## Contribuciones
 
 Las contribuciones son bienvenidas. Por favor, abre un issue o envía un pull request para discutir cualquier cambio que desees realizar.
 
