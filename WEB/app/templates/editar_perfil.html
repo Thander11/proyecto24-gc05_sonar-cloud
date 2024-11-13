@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streamex - Editar Perfil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .modal-content {
+            background-color: #333; /* Fondo gris sólido */
+            margin: 10% auto; /* Ajustar el margen superior para centrar la ventana más abajo */
+            padding: 40px; /* Aumentar el padding para hacer la ventana más grande */
+            width: 60%; /* Hacer la ventana más estrecha de los lados */
+            max-width: 600px; /* Ajustar el ancho máximo de la ventana */
+            text-align: center;
+            border-radius: 10px; /* Bordes redondeados */
+        }
+        .modal-content h2 {
+            color: rgb(255, 255, 255); /* Cambiar el color del texto a blanco */
+        }
+        .perfil-img-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .perfil-img-container img {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            transition: border-color 0.3s ease;
+        }
+        .perfil-img-container img.selected {
+            border-color: #00a72f;
+        }
+        .btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .btn-seleccionar {
+            background-color: #007bff;
+            color: white; /* Cambiar el color del texto a blanco */
+        }
+        .btn-guardar {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-eliminar {
+            background-color: #3ddb6a;
+            color: white;
+        }
+        .current-profile-pic {
+            display: flex;
+            align-items: center;
+            gap: 40px; /* Aumentar el espacio entre el texto y la imagen */
+        }
+        .current-profile-pic img {
+            width: 80px; /* Hacer la imagen 3px más grande */
+            height: 80px; /* Hacer la imagen 3px más grande */
+            border-radius: 60%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="#" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+            </a>
+        </nav>
+    </header>
+    
+    <main class="register-container">
+        <div class="register-overlay"></div>
+        <div class="register-content">
+            <div class="current-profile-pic">
+                <h1>Editar Perfil</h1>
+                <img id="current-profile-pic" src="{{ url_for('static', filename='imagenes/perfil' ~ perfil.fotoperfil ~ '.jpg') }}" alt="Foto de perfil actual">
+            </div>
+            <div class="register-form">
+                <form id="editar-perfil-form" action="{{ url_for('auth.verificar_editar_perfil') }}" method="POST">
+                    <div class="form-group">
+                        <label for="nombreperfil">Nombre del Perfil</label>
+                        <input type="text" id="nombreperfil" name="nombreperfil" value="{{ perfil.nombreperfil }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fotoperfil">Foto del Perfil</label>
+                        <input type="hidden" id="fotoperfil" name="fotoperfil" value="{{ perfil.fotoperfil }}" required>
+                        <button type="button" id="seleccionar-foto-btn" class="btn btn-seleccionar">Seleccionar Foto</button>
+                    </div>
+                    <input type="hidden" name="id" value="{{ perfil.idperfil }}">
+                    <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+                </form>
+                <form id="eliminar-perfil-form" action="{{ url_for('auth.eliminar_perfil') }}" method="POST">
+                    <input type="hidden" name="id" value="{{ perfil.idperfil }}">
+                    <button type="submit" class="btn btn-eliminar">Eliminar Perfil</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>Selecciona una Foto de Perfil</h2>
+            <div class="perfil-img-container">
+                {% for i in range(1, 21) %}
+                    <img src="{{ url_for('static', filename='imagenes/perfil' ~ i ~ '.jpg') }}" data-id="{{ i }}" class="{% if perfil.fotoperfil == i %}selected{% endif %}">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('seleccionar-foto-btn').addEventListener('click', function() {
+            document.getElementById('modal').style.display = 'block';
+        });
+
+        document.querySelectorAll('.perfil-img-container img').forEach(img => {
+            img.addEventListener('click', function() {
+                document.querySelectorAll('.perfil-img-container img').forEach(img => img.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('fotoperfil').value = this.getAttribute('data-id');
+                document.getElementById('current-profile-pic').src = this.src; // Actualizar la imagen de perfil actual
+                document.getElementById('modal').style.display = 'none';
+            });
+        });
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('modal')) {
+                document.getElementById('modal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Contenidos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Gestión de Contenidos</h1>
+        <a href="{{ url_for('auth.gestion_peliculas') }}" class="gestion-button">Gestión de Películas</a>
+        <a href="{{ url_for('auth.gestion_series') }}" class="gestion-button">Gestión de Series</a>    </main>
+        <a href="{{ url_for('auth.editar_personas') }}" class="gestion-button">Editar Personas</a>
+    </body>
+</html>
