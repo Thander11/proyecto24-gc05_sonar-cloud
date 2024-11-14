@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 import threading
 import time  # Add at top of file
-
+from datetime import datetime
 from app.services import UserService
 import random
 
@@ -226,15 +226,18 @@ def display_videos():
     t3.join()
     t4.join()
 
-    # Get results
+    # Obtener resultados
     tendencias = results['tendencias']
     favoritos = results['favoritos']
     visualizaciones = results['visualizaciones']
     recomendaciones = results['recomendaciones']
-
+    
+    # Limpiar las visualizaciones
+    visualizaciones_clean = filtrarVisualizaciones(visualizaciones)
+    print("Visualizaciones limpias: ", visualizaciones_clean)
+    
     return render_template('display_videos.html', perfil=perfil, perfiles=perfiles, 
-                         tendencias=tendencias, favoritos=favoritos, visualizaciones=visualizaciones, recomendaciones=recomendaciones)
-
+                          tendencias=tendencias, favoritos=favoritos, visualizaciones=visualizaciones_clean, recomendaciones=recomendaciones)
 
 @auth_bp.route('/usuario')
 def usuario():
@@ -408,7 +411,7 @@ def ver_video():
         response = UserService.registrar_visualizacion(usuario_id, content_id, duracion, tipo)
         if response:
             # Only redirect to video player if visualization was registered successfully
-            video_url = "https://www.youtube.com/embed/HwxZR0uQa0A"
+            video_url = "https://www.youtube.com/embed/UiOYxLrKYYc?si=H8_LXlTiWjllAymV"
             return render_template('video_player.html', video_url=video_url)
         else:
             print("Failed to register visualization, redirecting to videos")
@@ -840,3 +843,33 @@ def actualizar_cast_pelicula(pelicula_id):
     else:
         print("Error al actualizar el cast")
     return redirect(url_for('auth.gestion_peliculas'))
+
+
+def filtrarVisualizaciones(visualizaciones):
+    # Convertir las fechas de visualización a objetos datetime para facilitar la comparación
+    for visualizacion in visualizaciones:
+        visualizacion['fechaVisualizacion'] = datetime.fromisoformat(visualizacion['fechaVisualizacion'])
+
+    # Crear un diccionario para almacenar la visualización más reciente por serieId
+    visualizaciones_dict = {}
+    visualizaciones_clean = []
+
+    for visualizacion in visualizaciones:
+        if visualizacion['tipo'] == 'episodio':
+            serie_id = visualizacion['serieId']
+            if serie_id not in visualizaciones_dict or visualizacion['fechaVisualizacion'] > visualizaciones_dict[serie_id]['fechaVisualizacion']:
+                visualizaciones_dict[serie_id] = visualizacion
+        else:
+            visualizaciones_clean.append(visualizacion)
+
+    # Agregar las visualizaciones más recientes al resultado limpio
+    visualizaciones_clean.extend(visualizaciones_dict.values())
+
+    # Convertir las fechas de vuelta a cadenas ISO 8601
+    for visualizacion in visualizaciones_clean:
+        if isinstance(visualizacion['fechaVisualizacion'], datetime):
+            visualizacion['fechaVisualizacion'] = visualizacion['fechaVisualizacion'].isoformat()
+    # Reordenamos la lista por fecha de visualización
+    visualizaciones_clean = sorted(visualizaciones_clean, key=lambda x: x['fechaVisualizacion'], reverse=True)
+
+    return visualizaciones_clean

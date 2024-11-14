@@ -49,7 +49,8 @@
                 <button class="scroll-button left" onclick="scrollVideos('left', 'tendencias')">
                     <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
                 </button>
-                <div class="video-list" id="tendencias">
+                <div class="video-list" id="tendencias" style="
+                padding-bottom: 0px;">
                     {% for tendencia in tendencias %}
                     <div class="debug-info">{{ tendencia }}</div>
                         <div class="video-item" 
@@ -105,7 +106,8 @@
                 <button class="scroll-button left" onclick="scrollVideos('left', 'recomendaciones')">
                     <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
                 </button>
-                <div class="video-list" id="recomendaciones">
+                <div class="video-list" id="recomendaciones" style="
+                padding-bottom: 0px;">
                     {% for recomendacion in recomendaciones %}
                     <div class="debug-info">{{ recomendacion }}</div>
                         <div class="video-item" 
@@ -158,7 +160,8 @@
                 <button class="scroll-button left" onclick="scrollVideos('left', 'favoritos')">
                     <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
                 </button>
-                <div class="video-list" id="favoritos">
+                <div class="video-list" id="favoritos" style="
+                padding-bottom: 0px;">
                     {% for favorito in favoritos %}
                     <div class="debug-info">{{ favorito }}</div>
                         <div class="video-item" 
@@ -224,7 +227,8 @@
                 <button class="scroll-button left" onclick="scrollVideos('left', 'visualizaciones')">
                     <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
                 </button>
-                <div class="video-list" id="visualizaciones">
+                <div class="video-list" id="visualizaciones" style="
+                padding-bottom: 0px;">
                     {% if visualizaciones %}
                         {% for visualizacion in visualizaciones %}
                             <div class="video-item"
@@ -359,6 +363,22 @@ const rightButtonVisualizaciones = document.querySelector('.scroll-button.right[
             rightButtonVisualizaciones.style.opacity = 
                 (visualizacionesContainer.scrollWidth - visualizacionesContainer.clientWidth - visualizacionesContainer.scrollLeft) > 0 ? '1' : '0';
         });
+
+        document.querySelector('.perfil-dropdown').addEventListener('mouseenter', function() {
+        document.querySelector('.perfil-dropdown-content').style.display = 'block';
+    });
+
+    document.querySelector('.perfil-dropdown').addEventListener('mouseleave', function() {
+        document.querySelector('.perfil-dropdown-content').style.display = 'none';
+    });
+
+    document.querySelector('.perfil-dropdown-content').addEventListener('mouseenter', function() {
+        this.style.display = 'block';
+    });
+
+    document.querySelector('.perfil-dropdown-content').addEventListener('mouseleave', function() {
+        this.style.display = 'none';
+    });
 
     </script>
 </body>
