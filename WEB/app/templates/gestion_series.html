@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Series</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+    <style>
+        :root {
+            --primary-color: #10b63f;
+            --secondary-color: #564d4d;
+            --background-dark: #141414;
+            --card-background: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --hover-color: #26e53f;
+            --season-background: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            font-family: 'Netflix Sans', 'Helvetica Neue', Segoe UI, Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        .nav-header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%);
+            padding: 1rem 4%;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo {
+            width: 120px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        main {
+            padding: 120px 4% 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .peliculas-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .pelicula-item {
+            background: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pelicula-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .pelicula-title {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        .pelicula-title:hover {
+            background-color: var(--hover-color);
+        }
+
+        .pelicula-info {
+            padding: 1.5rem;
+            background: var(--card-background);
+        }
+
+        .pelicula-info p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .pelicula-info strong {
+            color: var(--text-primary);
+            display: inline-block;
+            margin-bottom: 0.3rem;
+        }
+
+        .pelicula-info ul {
+            margin: 0.5rem 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .pelicula-info ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .pelicula-info ul li:before {
+            content: "•";
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        .temporadas-list {
+            background: var(--season-background);
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .temporadas-list li {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .temporadas-list li:last-child {
+            border-bottom: none;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .modificar-button {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .modificar-button:hover {
+            background: var(--hover-color);
+            transform: scale(1.05);
+        }
+
+        .anadir-button {
+            display: block;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 2rem auto;
+            width: fit-content;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+        }
+
+        .anadir-button:hover {
+            background: var(--hover-color);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .peliculas-list {
+                grid-template-columns: 1fr;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .modificar-button {
+                width: 100%;
+            }
+
+            main {
+                padding: 100px 20px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="nav-header">
+            <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo">
+            </a>
+        </nav>
+    </header>
+    <main>
+        <h1>Gestión de Series</h1>
+        <div class="peliculas-list">
+            {% for serie in series %}
+            <div class="pelicula-item">
+                <button class="pelicula-title" onclick="toggleInfo({{ serie.id }})">{{ serie.titulo }}</button>
+                <div id="info-{{ serie.id }}" class="pelicula-info" style="display: none;">
+                    <p><strong>Sinopsis:</strong> {{ serie.sinopsis }}</p>
+                    <p><strong>Lanzamiento:</strong> {{ serie.lanzamiento }}</p>
+                    <p><strong>Géneros:</strong> {{ serie.generos | join(', ') }}</p>
+                    
+                    <div class="cast-section">
+                        <p><strong>Reparto:</strong></p>
+                        <ul>
+                            {% for actor in serie.cast %}
+                            <li>{{ actor.nombre }} ({{ actor.actor.nombre }} {{ actor.actor.apellidos }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="temporadas-section">
+                        <p><strong>Temporadas:</strong></p>
+                        <ul class="temporadas-list">
+                            {% for temporada in serie.temporadas %}
+                            <li>{{ temporada.nombre }} ({{ temporada.lanzamiento }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    
+                    <div class="button-container">
+                        <a href="{{ url_for('auth.modificar_serie', serie_id=serie.id) }}" class="modificar-button">Modificar Serie</a>
+                        <a href="{{ url_for('auth.gestionar_cast_serie', serie_id=serie.id) }}" class="modificar-button">Gestionar Cast</a>
+                        <button onclick="eliminarSerie({{ serie.id }})" class="modificar-button">Eliminar Serie</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('auth.anadir_serie') }}" class="anadir-button">Añadir Serie</a>
+    </main>
+
+    <script>
+        function toggleInfo(id) {
+            const info = document.getElementById('info-' + id);
+            const allInfos = document.querySelectorAll('.pelicula-info');
+            
+            allInfos.forEach(item => {
+                if (item.id !== 'info-' + id) {
+                    item.style.display = 'none';
+                }
+            });
+
+            info.style.display = info.style.display === 'none' || info.style.display === '' ? 'block' : 'none';
+        }
+
+        function eliminarSerie(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta serie?')) {
+                fetch(`/eliminar_serie/${id}`, {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar la serie');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la serie');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
