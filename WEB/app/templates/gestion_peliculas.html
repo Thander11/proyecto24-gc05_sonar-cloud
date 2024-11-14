@@ -1,26 +1,194 @@
-¡<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Películas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
-    <script>
-        function toggleInfo(id) {
-            var info = document.getElementById('info-' + id);
-            if (info.style.display === 'none' || info.style.display === '') {
-                info.style.display = 'block';
-            } else {
-                info.style.display = 'none';
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+    <style>
+        :root {
+            --primary-color: #10b63f;
+            --secondary-color: #564d4d;
+            --background-dark: #141414;
+            --card-background: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --hover-color: #26e53f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            font-family: 'Netflix Sans', 'Helvetica Neue', Segoe UI, Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        .nav-header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 100%);
+            padding: 1rem 4%;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-logo {
+            width: 120px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        main {
+            padding: 120px 4% 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .peliculas-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .pelicula-item {
+            background: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pelicula-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .pelicula-title {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 1rem;
+            width: 100%;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        .pelicula-title:hover {
+            background-color: var(--hover-color);
+        }
+
+        .pelicula-info {
+            padding: 1.5rem;
+            background: var(--card-background);
+        }
+
+        .pelicula-info p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .pelicula-info strong {
+            color: var(--text-primary);
+        }
+
+        .pelicula-info ul {
+            margin: 0.5rem 0 1.5rem 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .modificar-button {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .modificar-button:hover {
+            background: var(--hover-color);
+            transform: scale(1.05);
+        }
+
+        .anadir-button {
+            display: block;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 2rem auto;
+            width: fit-content;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+        }
+
+        .anadir-button:hover {
+            background: var(--hover-color);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .peliculas-list {
+                grid-template-columns: 1fr;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+
+            .modificar-button {
+                width: 100%;
             }
         }
-    </script>
+    </style>
 </head>
 <body>
     <header>
         <nav class="nav-header">
             <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
-                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo">
             </a>
         </nav>
     </header>
@@ -42,47 +210,49 @@
                         {% endfor %}
                     </ul>
                     <div class="button-container">
-                        <a href="{{ url_for('auth.modificar_pelicula', pelicula_id=pelicula.id) }}" class="modificar-button">Modificar Pelicula</a>
+                        <a href="{{ url_for('auth.modificar_pelicula', pelicula_id=pelicula.id) }}" class="modificar-button">Modificar Película</a>
                         <a href="{{ url_for('auth.gestionar_cast_pelicula', pelicula_id=pelicula.id) }}" class="modificar-button">Gestionar Cast</a>
-                        <button onclick="eliminarPelicula({{ pelicula.id }})" class="modificar-button">Eliminar Pelicula</button>
+                        <button onclick="eliminarPelicula({{ pelicula.id }})" class="modificar-button">Eliminar Película</button>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-
-        <div>
-            <a href="{{ url_for('auth.anadir_pelicula') }}" class="anadir-button">Añadir Película</a>
-        </div>
+        <a href="{{ url_for('auth.anadir_pelicula') }}" class="anadir-button">Añadir Película</a>
     </main>
-</body>
-<script>
-    function toggleInfo(id) {
-        var info = document.getElementById('info-' + id);
-        if (info.style.display === 'none' || info.style.display === '') {
-            info.style.display = 'block';
-        } else {
-            info.style.display = 'none';
-        }
-    }
 
-    function eliminarPelicula(id) {
-        if (confirm('¿Estás seguro de que deseas eliminar esta película?')) {
-            fetch(`/eliminar_pelicula/${id}`, {
-                method: 'POST',
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    alert('Error al eliminar la película');
+    <script>
+        function toggleInfo(id) {
+            const info = document.getElementById('info-' + id);
+            const allInfos = document.querySelectorAll('.pelicula-info');
+            
+            allInfos.forEach(item => {
+                if (item.id !== 'info-' + id) {
+                    item.style.display = 'none';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al eliminar la película');
             });
+
+            info.style.display = info.style.display === 'none' || info.style.display === '' ? 'block' : 'none';
         }
-    }
-</script>
+
+        function eliminarPelicula(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta película?')) {
+                fetch(`/eliminar_pelicula/${id}`, {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar la película');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la película');
+                });
+            }
+        }
+    </script>
+</body>
 </html>

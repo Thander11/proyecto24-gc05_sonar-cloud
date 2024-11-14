@@ -93,6 +93,9 @@ class Serie(db.Model):
         if primer_episodio:
             return primer_episodio.cast
         return []
+    @property
+    def num_temporadas(self):
+        return len(self.temporadas)
     def to_dict(self):
         return {
             'id': self.id,
@@ -101,7 +104,8 @@ class Serie(db.Model):
             'lanzamiento': self.lanzamiento,
             'generos': [genero.nombre for genero in self.generos],
             'cast': [personaje.to_dict() for personaje in self.cast],
-            'temporadas': [temporada.to_dict() for temporada in self.temporadas]
+            'temporadas': [temporada.to_dict() for temporada in self.temporadas],
+            'num_temporadas': self.num_temporadas
         }
 
 class Temporada(db.Model):

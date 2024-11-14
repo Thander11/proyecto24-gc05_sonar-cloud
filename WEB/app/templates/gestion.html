@@ -3,21 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Contenidos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
+    <title>Panel de Gestión - Streamex</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00ea43;
+            --primary-dark: #00a72f;
+            --bg-dark: #141414;
+            --bg-card: #1f1f1f;
+            --text-light: #ffffff;
+            --card-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Netflix Sans', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-header {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-logo {
+            width: 120px;
+            transition: var(--transition);
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        main {
+            padding: 120px 2rem 2rem;
+            flex-grow: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .management-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .management-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .management-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .management-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-description {
+            color: #888;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-button {
+            background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            display: inline-block;
+            transition: var(--transition);
+            position: relative;
+            z-index: 2;
+            border: none;
+            cursor: pointer;
+        }
+
+        .card-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,234,67,0.3);
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 100px 1rem 1rem;
+            }
+
+            .dashboard-title {
+                font-size: 2rem;
+            }
+
+            .management-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav class="nav-header">
             <a href="{{ url_for('auth.display_videos') }}" class="nav-logo">
-                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo" class="Streamex-logo">
+                <img src="{{ url_for('static', filename='imagenes/logomini.png') }}" alt="Streamex Logo">
             </a>
         </nav>
     </header>
+
     <main>
-        <h1>Gestión de Contenidos</h1>
-        <a href="{{ url_for('auth.gestion_peliculas') }}" class="gestion-button">Gestión de Películas</a>
-        <a href="{{ url_for('auth.gestion_series') }}" class="gestion-button">Gestión de Series</a>    </main>
-        <a href="{{ url_for('auth.editar_personas') }}" class="gestion-button">Editar Personas</a>
-    </body>
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Panel de Gestión</h1>
+            <p class="dashboard-subtitle">Administra el contenido de tu plataforma de streaming</p>
+        </div>
+
+        <div class="management-grid">
+            <div class="management-card">
+                <i class="fas fa-film card-icon"></i>
+                <h2 class="card-title">Gestión de Películas</h2>
+                <p class="card-description">Administra el catálogo de películas, añade nuevos títulos y actualiza la información existente.</p>
+                <a href="{{ url_for('auth.gestion_peliculas') }}" class="card-button">
+                    Gestionar Películas
+                </a>
+            </div>
+
+            <div class="management-card">
+                <i class="fas fa-tv card-icon"></i>
+                <h2 class="card-title">Gestión de Series</h2>
+                <p class="card-description">Controla las series, temporadas y episodios disponibles en la plataforma.</p>
+                <a href="{{ url_for('auth.gestion_series') }}" class="card-button">
+                    Gestionar Series
+                </a>
+            </div>
+
+            <div class="management-card">
+                <i class="fas fa-users card-icon"></i>
+                <h2 class="card-title">Editar Personas</h2>
+                <p class="card-description">Gestiona la información de actores, directores y personal relacionado.</p>
+                <a href="{{ url_for('auth.editar_personas') }}" class="card-button">
+                    Editar Personas
+                </a>
+            </div>
+        </div>
+    </main>
+</body>
 </html>

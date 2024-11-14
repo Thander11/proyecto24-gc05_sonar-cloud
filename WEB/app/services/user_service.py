@@ -152,7 +152,7 @@ class UserService:
         return response.json() if response else None
 
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_tendencias(cls):
         start_time = time.time()
         url = 'http://127.0.0.1:5010/tendencias'
@@ -186,7 +186,7 @@ class UserService:
             return []
 
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_favoritos(cls, id_perfil):
         start_time = time.time()
         url = f'http://127.0.0.1:5010/favoritos/{id_perfil}'
@@ -212,7 +212,7 @@ class UserService:
             return []
 
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_visualizaciones_usuario(cls, id_perfil):
         start_time = time.time()
         url = f'http://127.0.0.1:5010/visualizaciones/{id_perfil}'
@@ -239,13 +239,13 @@ class UserService:
             return []
 
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_detalles_pelicula(cls, contenido_id):
         response = cls._make_request('GET', f'http://127.0.0.1:5005/peliculas/{contenido_id}')
         return response.json() if response else None
 
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_detalles_serie(cls, contenido_id):
         start_time = time.time()
         
@@ -361,7 +361,7 @@ class UserService:
         return response.json() if response else []
     
     @classmethod
-    @lru_cache(maxsize=256)
+    
     def obtener_recomendaciones(cls, id_perfil):
         start_time = time.time()
         url = f'http://127.0.0.1:5010/recomendaciones/{id_perfil}'
