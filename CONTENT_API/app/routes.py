@@ -290,6 +290,9 @@ def delete_episodio(id):
 @routes_bp.route('/temporadas/<int:id>', methods=['DELETE'])
 def delete_temporada(id):
     temporada = Temporada.query.get_or_404(id)
+    # Borrar todos los episodios de la temporada
+    for episodio in temporada.episodios:
+        db.session.delete(episodio)
     db.session.delete(temporada)
     db.session.commit()
     return jsonify({'message': 'Temporada eliminada exitosamente'}), 200
@@ -297,6 +300,11 @@ def delete_temporada(id):
 @routes_bp.route('/series/<int:id>', methods=['DELETE'])
 def delete_serie(id):
     serie = Serie.query.get_or_404(id)
+    # Borrar todas las temporadas y episodios de la serie
+    for temporada in serie.temporadas:
+        for episodio in temporada.episodios:
+            db.session.delete(episodio)
+        db.session.delete(temporada)
     db.session.delete(serie)
     db.session.commit()
     return jsonify({'message': 'Serie eliminada exitosamente'}), 200
@@ -311,6 +319,9 @@ def delete_personaje(id):
 @routes_bp.route('/personas/<int:id>', methods=['DELETE'])
 def delete_persona(id):
     persona = Persona.query.get_or_404(id)
+    # Borramos todos los personajes asociados a la persona
+    for personaje in persona.personajes:
+        db.session.delete(personaje)
     db.session.delete(persona)
     db.session.commit()
     return jsonify({'message': 'Persona eliminada exitosamente'}), 200

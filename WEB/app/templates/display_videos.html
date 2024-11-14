@@ -43,186 +43,9 @@
     </header>
 
     <main>
-        <div class="video-section">
-            <h2>Tendencias</h2>
-            <div class="video-list-container">
-                <button class="scroll-button left" onclick="scrollVideos('left', 'tendencias')">
-                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
-                </button>
-                <div class="video-list" id="tendencias" style="
-                padding-bottom: 0px;">
-                    {% for tendencia in tendencias %}
-                    <div class="debug-info">{{ tendencia }}</div>
-                        <div class="video-item" 
-                        data-tipo="{{ tendencia.tipo }}"
-                        data-id="{{ tendencia.contenidoId|trim }} ">
-                            <div class="video-item-inner">
-                                {% if tendencia.tipo == 'serie' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (tendencia.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ tendencia.serieId }}">                                {% endif %}
-                                {% if tendencia.tipo == 'pelicula' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ tendencia.contenidoId ~ '.jpg') }}" alt="Miniatura {{ tendencia.contenidoId }}">
-                                {% endif %}
-                                <div class="info">
-                                    <div class="info-top">
-                                        <h3>{{ tendencia.nombre }}</h3>
-                                        <div class="controls">
-                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
-                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
-                                                <input type="hidden" name="id" value="{{ tendencia.contenidoId|trim }}">
-                                                <button type="submit" class="control-btn play">▶</button>
-                                            </form>                                            
-                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
-                                                <input type="hidden" name="contentId" value="{{ tendencia.contenidoId }}">
-                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
-                                                <button type="submit" class="control-btn like">👍</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="info-bottom">
-                                        {% if tendencia.tipo == 'serie' %}
-                                            <span class="seasons">{{ tendencia.num_temporadas }} temporadas</span>
-                                        {% endif %}
-                                        <div class="tags">
-                                            <span>{{ tendencia.tipo }}</span>
-                                            <span>HD</span>
-                                            <span>16+</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button class="scroll-button right" onclick="scrollVideos('right', 'tendencias')">
-                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
-                </button>
-            </div>
-        </div>
-
 
         <div class="video-section">
-            <h2>Recomendaciones</h2>
-            <div class="video-list-container">
-                <button class="scroll-button left" onclick="scrollVideos('left', 'recomendaciones')">
-                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
-                </button>
-                <div class="video-list" id="recomendaciones" style="
-                padding-bottom: 0px;">
-                    {% for recomendacion in recomendaciones %}
-                    <div class="debug-info">{{ recomendacion }}</div>
-                        <div class="video-item" 
-                        data-tipo="{{ recomendacion.tipo }}"
-                        data-id="{{ recomendacion.contenidoId|trim }} ">
-                            <div class="video-item-inner">
-                                {% if recomendacion.tipo == 'serie' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (recomendacion.contenidoId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
-                                {% endif %}
-                                {% if recomendacion.tipo == 'pelicula' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ recomendacion.contenidoId ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
-                                {% endif %}
-                                <div class="info">
-                                    <div class="info-top">
-                                        <h3>{{ recomendacion.nombre }}</h3>
-                                        <div class="controls">
-                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
-                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
-                                                <input type="hidden" name="id" value="{{ recomendacion.contenidoId|trim }}">
-                                                <button type="submit" class="control-btn play">▶</button>
-                                            </form>                                            
-                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
-                                                <input type="hidden" name="contentId" value="{{ recomendacion.contenidoId }}">
-                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
-                                                <button type="submit" class="control-btn like">👍</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div class="info-bottom">
-                                        {% if recomendacion.tipo == 'serie' %}
-                                        <p>{{ recomendacion.num_temporadas }} Temporadas</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button class="scroll-button right" onclick="scrollVideos('right', 'recomendaciones')">
-                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
-                </button>
-            </div>
-        </div>
-
-
-        
-        <div class="video-section">
-            <h2>Favoritos</h2>
-            <div class="video-list-container">
-                <button class="scroll-button left" onclick="scrollVideos('left', 'favoritos')">
-                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
-                </button>
-                <div class="video-list" id="favoritos" style="
-                padding-bottom: 0px;">
-                    {% for favorito in favoritos %}
-                    <div class="debug-info">{{ favorito }}</div>
-                        <div class="video-item" 
-                        data-tipo="{{ favorito.tipo }}"
-                        data-id="{{ favorito.contenidoId|trim }} ">
-                            <div class="video-item-inner">
-                                {% if favorito.tipo == 'serie' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (favorito.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ favorito.serieId }}">
-                                {% endif %}
-                                {% if favorito.tipo == 'pelicula' %}
-                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ favorito.contenidoId ~ '.jpg') }}" alt="Miniatura {{ favorito.contenidoId }}">
-                                {% endif %}
-                                <div class="info">
-                                    <div class="info-top">
-                                        <h3>{{ favorito.nombre }}</h3>
-                                        <div class="controls">
-                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
-                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
-                                                <input type="hidden" name="id" value="{{ favorito.contenidoId|trim }}">
-                                                <button type="submit" class="control-btn play">▶</button>
-                                            </form>
-                                            {% if favorito.tipo == 'pelicula' %}
-                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
-                                                <input type="hidden" name="contentId" value="{{ favorito.contenidoId|trim }}">
-                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
-                                                <button type="submit" class="control-btn like">❌</button>
-                                            </form>
-                                            {% endif %}
-                                            {% if favorito.tipo == 'serie' %}
-                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
-                                                <input type="hidden" name="contentId" value="{{ favorito.serieId|trim }}">
-                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
-                                                <button type="submit" class="control-btn like">❌</button>
-                                            </form>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="info-bottom">
-                                        {% if favorito.tipo == 'serie' %}
-                                            <span class="seasons">{{ favorito.num_temporadas }} temporadas</span>
-                                        {% endif %}
-                                        <div class="tags">
-                                            <span>{{ favorito.tipo }}</span>
-                                            <span>HD</span>
-                                            <span>16+</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                <button class="scroll-button right" onclick="scrollVideos('right', 'favoritos')">
-                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
-                </button>
-            </div>
-        </div>
-
-
-        <div class="video-section">
-            <h2>Visualizaciones</h2>
+            <h2>Continuar viendo</h2>
             <div class="video-list-container">
                 <button class="scroll-button left" onclick="scrollVideos('left', 'visualizaciones')">
                     <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
@@ -305,15 +128,286 @@
             </div>
         </div>
 
+        <div class="video-section">
+            <h2>En tendencia</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'tendencias')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="tendencias" style="
+                padding-bottom: 0px;">
+                    {% for tendencia in tendencias %}
+                    <div class="debug-info">{{ tendencia }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ tendencia.tipo }}"
+                        data-id="{{ tendencia.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if tendencia.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (tendencia.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ tendencia.serieId }}">                                {% endif %}
+                                {% if tendencia.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ tendencia.contenidoId ~ '.jpg') }}" alt="Miniatura {{ tendencia.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ tendencia.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
+                                                <input type="hidden" name="id" value="{{ tendencia.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ tendencia.contenidoId }}">
+                                                <input type="hidden" name="tipo" value="{{ tendencia.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if tendencia.tipo == 'serie' %}
+                                            <span class="seasons">{{ tendencia.num_temporadas }} temporadas</span>
+                                        {% endif %}
+                                        <div class="tags">
+                                            <span>{{ tendencia.tipo }}</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'tendencias')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
 
-
-
-
-
-
-
-
-
+        <div class="video-section">
+            <h2>Te recomendamos ver</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'recomendaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="recomendaciones" style="
+                padding-bottom: 0px;">
+                    {% for recomendacion in recomendaciones %}
+                    <div class="debug-info">{{ recomendacion }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ recomendacion.tipo }}"
+                        data-id="{{ recomendacion.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if recomendacion.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (recomendacion.contenidoId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
+                                {% endif %}
+                                {% if recomendacion.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ recomendacion.contenidoId ~ '.jpg') }}" alt="Miniatura {{ recomendacion.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ recomendacion.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
+                                                <input type="hidden" name="id" value="{{ recomendacion.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ recomendacion.contenidoId }}">
+                                                <input type="hidden" name="tipo" value="{{ recomendacion.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if recomendacion.tipo == 'serie' %}
+                                        <p>{{ recomendacion.num_temporadas }} Temporadas</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'recomendaciones')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+        
+        <div class="video-section">
+            <h2>Tus favoritos</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'favoritos')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="favoritos" style="
+                padding-bottom: 0px;">
+                    {% for favorito in favoritos %}
+                    <div class="debug-info">{{ favorito }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ favorito.tipo }}"
+                        data-id="{{ favorito.contenidoId|trim }} ">
+                            <div class="video-item-inner">
+                                {% if favorito.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (favorito.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ favorito.serieId }}">
+                                {% endif %}
+                                {% if favorito.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ favorito.contenidoId ~ '.jpg') }}" alt="Miniatura {{ favorito.contenidoId }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ favorito.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <input type="hidden" name="id" value="{{ favorito.contenidoId|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>
+                                            {% if favorito.tipo == 'pelicula' %}
+                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ favorito.contenidoId|trim }}">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <button type="submit" class="control-btn like">❌</button>
+                                            </form>
+                                            {% endif %}
+                                            {% if favorito.tipo == 'serie' %}
+                                            <form action="{{ url_for('auth.eliminar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ favorito.serieId|trim }}">
+                                                <input type="hidden" name="tipo" value="{{ favorito.tipo }}">
+                                                <button type="submit" class="control-btn like">❌</button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if favorito.tipo == 'serie' %}
+                                            <span class="seasons">{{ favorito.num_temporadas }} temporadas</span>
+                                        {% endif %}
+                                        <div class="tags">
+                                            <span>{{ favorito.tipo }}</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'favoritos')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+    
+        <div class="video-section">
+            <h2>Todas nuestras peliculas</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'allFilms')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="allFilms" style="
+                padding-bottom: 0px;">
+                    {% for allFilmed in allFilms %}
+                    <div class="debug-info">{{ allFilmed }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ allFilmed.tipo }}"
+                        data-id="{{ allFilmed.id|trim }} ">
+                            <div class="video-item-inner">
+                                {% if allFilmed.tipo == 'serie' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (allFilmed.serieId|int + 50) ~ '.jpg') }}" alt="Miniatura {{ allFilmed.serieId }}">                                {% endif %}
+                                {% if allFilmed.tipo == 'pelicula' %}
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ allFilmed.id ~ '.jpg') }}" alt="Miniatura {{ allFilmed.id }}">
+                                {% endif %}
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ allFilmed.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="{{ allFilmed.tipo }}">
+                                                <input type="hidden" name="id" value="{{ allFilmed.id|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ allFilmed.id }}">
+                                                <input type="hidden" name="tipo" value="{{ allFilmed.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        {% if allFilmed.tipo == 'serie' %}
+                                            <span class="seasons">{{ allFilmed.num_temporadas }} temporadas</span>
+                                        {% endif %}
+                                        <div class="tags">
+                                            <span>{{ allFilmed.tipo }}</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'allFilms')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+        
+        <div class="video-section">
+            <h2>Todas nuestras series</h2>
+            <div class="video-list-container">
+                <button class="scroll-button left" onclick="scrollVideos('left', 'allSeries')">
+                    <img src="{{ url_for('static', filename='imagenes/menos.png') }}" alt="Menos">
+                </button>
+                <div class="video-list" id="allSeries" style="
+                padding-bottom: 0px;">
+                    {% for alledSerie in allSeries %}
+                    <div class="debug-info">{{ alledSerie }}</div>
+                        <div class="video-item" 
+                        data-tipo="{{ alledSerie.tipo }}"
+                        data-id="{{ alledSerie.id|trim }} ">
+                            <div class="video-item-inner">
+                                <img src="{{ url_for('static', filename='imagenes/miniaturas/miniatura' ~ (alledSerie.id|int + 50) ~ '.jpg') }}" alt="Miniatura {{ alledSerie.id }}">
+                                <div class="info">
+                                    <div class="info-top">
+                                        <h3>{{ alledSerie.nombre }}</h3>
+                                        <div class="controls">
+                                            <form action="{{ url_for('auth.content_details') }}" method="GET" style="display: inline;">
+                                                <input type="hidden" name="tipo" value="serie">
+                                                <input type="hidden" name="id" value="{{ alledSerie.id|trim }}">
+                                                <button type="submit" class="control-btn play">▶</button>
+                                            </form>                                            
+                                            <form action="{{ url_for('auth.agregar_favorito') }}" method="POST" style="display: inline;">
+                                                <input type="hidden" name="contentId" value="{{ alledSerie.id }}">
+                                                <input type="hidden" name="tipo" value="{{ alledSerie.tipo }}">
+                                                <button type="submit" class="control-btn like">👍</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="info-bottom">
+                                        <div class="tags">
+                                            <span>Serie</span>
+                                            <span>HD</span>
+                                            <span>16+</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="scroll-button right" onclick="scrollVideos('right', 'allSeries')">
+                    <img src="{{ url_for('static', filename='imagenes/mas.png') }}" alt="Más">
+                </button>
+            </div>
+        </div>
+        
+        
     </main>
 
     <script>

@@ -190,7 +190,9 @@ def display_videos():
         'tendencias': None,
         'favoritos': None,
         'visualizaciones': None,
-        'recomendaciones': None
+        'recomendaciones': None,
+        'allFilms': None,
+        'allSeries': None
     }
 
     # Functions for each operation
@@ -208,45 +210,67 @@ def display_videos():
     def get_recomendaciones(perfil_id):
         results['recomendaciones'] = UserService.obtener_recomendaciones(perfil_id)
     print("he llamado a las funciones4")
+    def get_allFilms():
+        results['allFilms'] = UserService.obtener_peliculas()
+        print("he llamado a las funciones5")
+    def get_allSeries():
+        results['allSeries'] = UserService.obtener_series()
+        print("he llamado a las funciones6")
     # Create threads
     t1 = threading.Thread(target=get_tendencias)
     t2 = threading.Thread(target=get_favoritos, args=(perfil_id,))
     t3 = threading.Thread(target=get_visualizaciones, args=(perfil_id,))
     t4 = threading.Thread(target=get_recomendaciones, args=(perfil_id,))
+    t5 = threading.Thread(target=get_allFilms)
+    t6 = threading.Thread(target=get_allSeries)
+
 
     # Start threads
     t1.start()
     t2.start()
     t3.start()
     t4.start()
+    t5.start()
+    t6.start()
 
     # Wait for all threads to complete
     t1.join()
     t2.join()
     t3.join()
     t4.join()
+    t5.join()
+    t6.join()
 
     # Obtener resultados
     tendencias = results['tendencias']
     favoritos = results['favoritos']
     visualizaciones = results['visualizaciones']
     recomendaciones = results['recomendaciones']
+    allFilms = results['allFilms']
+    allSeries = results['allSeries']
     
     # Limpiar las visualizaciones
     visualizaciones_clean = filtrarVisualizaciones(visualizaciones)
     print("Visualizaciones limpias: ", visualizaciones_clean)
+
+    allFilms = randomizarLista(allFilms)
+    allSeries = randomizarLista(allSeries)
+
+    print("All Films: ", allSeries)
     
     return render_template('display_videos.html', perfil=perfil, perfiles=perfiles, 
-                          tendencias=tendencias, favoritos=favoritos, visualizaciones=visualizaciones_clean, recomendaciones=recomendaciones)
+                          tendencias=tendencias, favoritos=favoritos, visualizaciones=visualizaciones_clean, recomendaciones=recomendaciones,
+                          allFilms=allFilms, allSeries=allSeries)
 
 @auth_bp.route('/usuario')
 def usuario():
     usuario = session.get('usuario')
     if not usuario:
         return redirect(url_for('auth.login'))
-    
     pago = UserService.obtener_pago(usuario['id'])
-    
+    # Si pago es None, poner uno de copia
+    if not pago:
+        pago = {"numerotarjeta": "0000 0000 0000 0000", "fechacaducidad": "00/00", "cvc": "000"}
     return render_template('usuario.html', usuario=usuario, pago=pago)
 
 
@@ -408,14 +432,9 @@ def ver_video():
         print(f"Adding visualization - User: {usuario_id}, Content: {content_id}, Type: {tipo}, Duration: {duracion}")
 
         # Register visualization
-        response = UserService.registrar_visualizacion(usuario_id, content_id, duracion, tipo)
-        if response:
-            # Only redirect to video player if visualization was registered successfully
-            video_url = "https://www.youtube.com/embed/UiOYxLrKYYc?si=H8_LXlTiWjllAymV"
-            return render_template('video_player.html', video_url=video_url)
-        else:
-            print("Failed to register visualization, redirecting to videos")
-            return redirect(url_for('auth.display_videos', id=usuario_id))
+        UserService.registrar_visualizacion(usuario_id, content_id, duracion, tipo)
+        video_url = "https://www.youtube.com/embed/UiOYxLrKYYc?si=H8_LXlTiWjllAymV"
+        return render_template('video_player.html', video_url=video_url)
 
     except Exception as e:
         print(f"Error in ver_video: {e}")
@@ -873,3 +892,7 @@ def filtrarVisualizaciones(visualizaciones):
     visualizaciones_clean = sorted(visualizaciones_clean, key=lambda x: x['fechaVisualizacion'], reverse=True)
 
     return visualizaciones_clean
+
+
+def randomizarLista(lista):
+    return random.sample(lista, len(lista))

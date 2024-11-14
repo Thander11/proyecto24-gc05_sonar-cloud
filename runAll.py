@@ -1,8 +1,9 @@
 import subprocess
 import platform
 import os
+import webbrowser
+import time
 
-# Función para abrir un comando en una nueva terminal
 def open_new_terminal(command, title=None):
     """
     Abre un comando en una nueva terminal según el sistema operativo y ejecuta el script.
@@ -10,7 +11,6 @@ def open_new_terminal(command, title=None):
     system = platform.system()
     try:
         if system == "Windows":
-            # Construir el comando para cmd.exe
             full_command = f"start cmd.exe /k {' '.join(command)}"
             if title:
                 full_command = f"start \"{title}\" cmd.exe /k {' '.join(command)}"
@@ -27,15 +27,12 @@ def open_new_terminal(command, title=None):
     except Exception as e:
         print(f"\nError al intentar abrir el comando en una nueva terminal: {str(e)}")
 
-# Función principal
 def main():
     """
-    Ejecuta los scripts en nuevas terminales.
+    Ejecuta los scripts en nuevas terminales y abre el navegador.
     """
-    # Obtener el directorio actual
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Lista de scripts a ejecutar
     scripts = [
         (["python.exe", os.path.join(current_dir, "CONTENT_API", "run.py")], "CONTENT_API"),
         (["python.exe", os.path.join(current_dir, "USERS_API", "manage.py"), "runserver"], "USERS_API"),
@@ -46,6 +43,16 @@ def main():
     for command, title in scripts:
         open_new_terminal(command, title)
 
+    # Esperar 5 segundos
+    print("Esperando 5 segundos para que los servicios inicien...")
+    time.sleep(5)
+
+    # Abrir con el navegador predeterminado
+    try:
+        webbrowser.open('http://127.0.0.1:5000/')
+    except Exception as e:
+        print(f"Error al abrir el navegador: {str(e)}")
+        print("Intente abrir manualmente: http://127.0.0.1:5000/")
 
 if __name__ == "__main__":
     main()

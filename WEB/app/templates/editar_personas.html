@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Personas</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imagenes/favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion.css') }}">
     <style>
         .accordion {
@@ -172,7 +173,7 @@
             <div class="accordion-item add-persona">
                 <div class="accordion-header" onclick="toggleAccordion(this)">
                     <div class="header-content">
-                        <div class="header-title">Añadir Nueva Persona</div>
+                        <div class="header-title">➕ Añadir Nueva Persona</div>
                     </div>
                 </div>
                 <div class="accordion-content">
@@ -197,7 +198,7 @@
                         </div>
                         <button type="button" class="eliminar-button" 
                                 onclick="eliminarPersona({{ persona.id }})">
-                            Eliminar Persona
+                            🗑️ Eliminar Persona
                         </button>
                     </div>
                 </div>
@@ -227,7 +228,7 @@
                                         </div>
                                         <button type="button" class="eliminar-button" 
                                                 onclick="eliminarPersonaje({{ personaje.id }})">
-                                            Eliminar Personaje
+                                            🗑️ Eliminar Personaje
                                         </button>
                                     </div>
                                 </div>
@@ -248,7 +249,7 @@
                             <div class="accordion-item">
                                 <div class="accordion-header" onclick="toggleAccordion(this)">
                                     <div class="header-content">
-                                        <div class="header-title">Añadir Nuevo Personaje</div>
+                                        <div class="header-title">➕ Añadir Nuevo Personaje</div>
                                     </div>
                                 </div>
                                 <div class="accordion-content">
