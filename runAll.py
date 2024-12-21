@@ -34,12 +34,13 @@ def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     run = "run.py"
+    python = "python.exe"
 
     scripts = [
-        (["python.exe", os.path.join(current_dir, "CONTENT_API", run)], "CONTENT_API"),
-        (["python.exe", os.path.join(current_dir, "USERS_API", "manage.py"), "runserver"], "USERS_API"),
-        (["python.exe", os.path.join(current_dir, "RECOMENDACIONES_API", run)], "RECOMENDACIONES_API"),
-        (["python.exe", os.path.join(current_dir, "WEB", run)], "WEB"),
+        ([python, os.path.join(current_dir, "CONTENT_API", run)], "CONTENT_API"),
+        ([python, os.path.join(current_dir, "USERS_API", "manage.py"), "runserver"], "USERS_API"),
+        ([python, os.path.join(current_dir, "RECOMENDACIONES_API", run)], "RECOMENDACIONES_API"),
+        ([python, os.path.join(current_dir, "WEB", run)], "WEB"),
     ]
 
     for command, title in scripts:
