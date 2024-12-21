@@ -32,12 +32,14 @@ def main():
     Ejecuta los scripts en nuevas terminales y abre el navegador.
     """
     current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    run = "run.py"
 
     scripts = [
-        (["python.exe", os.path.join(current_dir, "CONTENT_API", "run.py")], "CONTENT_API"),
+        (["python.exe", os.path.join(current_dir, "CONTENT_API", run)], "CONTENT_API"),
         (["python.exe", os.path.join(current_dir, "USERS_API", "manage.py"), "runserver"], "USERS_API"),
-        (["python.exe", os.path.join(current_dir, "RECOMENDACIONES_API", "run.py")], "RECOMENDACIONES_API"),
-        (["python.exe", os.path.join(current_dir, "WEB", "run.py")], "WEB"),
+        (["python.exe", os.path.join(current_dir, "RECOMENDACIONES_API", run)], "RECOMENDACIONES_API"),
+        (["python.exe", os.path.join(current_dir, "WEB", run)], "WEB"),
     ]
 
     for command, title in scripts:
